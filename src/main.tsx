@@ -1,21 +1,30 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
 import "bootstrap/dist/css/bootstrap.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import ErrorPage from './Components/ErrorPage.tsx';
-import AnimePage from './Components/AnimePage.tsx';
+import ErrorPage from './Components/ErrorPage';
+import AnimePage from './Components/AnimePage';
+import AnimeDetail from './Components/AnimeDetail';
+import SearchAnimePage from './Components/SearchAnimePage';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App/>,
-    // Página de Erro
-    errorElement: <ErrorPage/>,
+    element: <App />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "/",
-        element: <AnimePage/>,
+        element: <AnimePage />,
+      },
+      {
+        path: "anime/:id",
+        element: <AnimeDetail />,
+      },
+      {
+        path: "search-results",
+        element: <SearchAnimePage />,
       }
     ]
   },
