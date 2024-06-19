@@ -1,7 +1,12 @@
-import React, { useEffect, useState } from 'react';
+// src/Components/AnimePage.tsx
+import React, { useEffect, useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Dropdown } from 'react-bootstrap';
+import { AnimeContext } from '../AnimeContext';
+import './images.css';
+import { FaCheck } from 'react-icons/fa';
 
-// Definição dos tipos dos dados retornados pela API
 interface Anime {
     mal_id: number;
     title: string;
@@ -17,11 +22,11 @@ interface ApiResponse {
     data: Anime[];
 }
 
-
 const AnimePage: React.FC = () => {
     const [animes, setAnimes] = useState<Anime[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const { addToList, lists } = useContext(AnimeContext);
 
     useEffect(() => {
         fetch('https://api.jikan.moe/v4/top/anime')
@@ -45,18 +50,36 @@ const AnimePage: React.FC = () => {
         return <div>{error}</div>;
     }
 
+    const isAddedToList = (anime: Anime) => {
+        return lists.porVisualizar.some(a => a.mal_id === anime.mal_id) ||
+               lists.aVisualizar.some(a => a.mal_id === anime.mal_id) ||
+               lists.completado.some(a => a.mal_id === anime.mal_id);
+    };
+
     return (
         <div className="container">
             <h1 className="my-4">Animes Populares</h1>
             <div className="row">
                 {animes.map(anime => (
-                    <div key={anime.mal_id} className="col-md-3 mb-4">
-                        <div className="card h-100">
-                            <img src={anime.images.jpg.image_url} alt={anime.title} className="card-img-top" />
+                    <div key={anime.mal_id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <div className="card h-100 position-relative">
+                            <Link to={`/anime/${anime.mal_id}`}>
+                                <img src={anime.images.jpg.image_url} alt={anime.title} className="card-img-top fixed-image" />
+                            </Link>
                             <div className="card-body">
                                 <h5 className="card-title">{anime.title}</h5>
-                                <p className="card-text">Score: {anime.score}</p>
+                                <p className="card-text">Avaliação: {anime.score}</p>
                             </div>
+                            <Dropdown className="position-absolute" style={{ bottom: 10, right: 10 }}>
+                                <Dropdown.Toggle variant="success" id="dropdown-basic">
+                                    {isAddedToList(anime) ? <FaCheck /> : '+'}
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item onClick={() => addToList(anime, 'Por visualizar')}>Por visualizar</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => addToList(anime, 'A visualizar')}>A visualizar</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => addToList(anime, 'Completado')}>Completado</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
                         </div>
                     </div>
                 ))}
