@@ -1,4 +1,3 @@
-// src/Components/AnimePage.tsx
 import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -20,19 +19,36 @@ interface Anime {
 
 interface ApiResponse {
     data: Anime[];
+    pagination: {
+        has_next_page: boolean;
+        current_page: number;
+    };
 }
 
 const AnimePage: React.FC = () => {
     const [animes, setAnimes] = useState<Anime[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [page, setPage] = useState<number>(1);
     const { addToList, lists } = useContext(AnimeContext);
 
     useEffect(() => {
-        fetch('https://api.jikan.moe/v4/top/anime')
+        // Fetch initial animes
+        fetchAnimes(1, true);
+    }, []);
+
+    useEffect(() => {
+        if (page > 1) {
+            fetchAnimes(page, false);
+        }
+    }, [page]);
+
+    const fetchAnimes = (page: number, initialLoad: boolean) => {
+        setLoading(true);
+        fetch(`https://api.jikan.moe/v4/top/anime?page=${page}`)
             .then(response => response.json())
             .then((data: ApiResponse) => {
-                setAnimes(data.data.slice(0, 24));
+                setAnimes(prevAnimes => initialLoad ? data.data : [...prevAnimes, ...data.data]);
                 setLoading(false);
             })
             .catch((error) => {
@@ -40,11 +56,20 @@ const AnimePage: React.FC = () => {
                 setError('Erro ao buscar dados da API');
                 setLoading(false);
             });
-    }, []);
+    };
 
-    if (loading) {
-        return <div>Carregando...</div>;
-    }
+    const handleScroll = () => {
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight && !loading) {
+            setPage(prevPage => prevPage + 1);
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [loading]);
 
     if (error) {
         return <div>{error}</div>;
@@ -75,15 +100,16 @@ const AnimePage: React.FC = () => {
                                     {isAddedToList(anime) ? <FaCheck /> : '+'}
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
-                                    <Dropdown.Item onClick={() => addToList(anime, 'Por visualizar')}>Por visualizar</Dropdown.Item>
-                                    <Dropdown.Item onClick={() => addToList(anime, 'A visualizar')}>A visualizar</Dropdown.Item>
-                                    <Dropdown.Item onClick={() => addToList(anime, 'Completado')}>Completado</Dropdown.Item>
+                                    <Dropdown.Item onClick={(e) => { e.preventDefault(); addToList(anime, 'porVisualizar'); }}>Por visualizar</Dropdown.Item>
+                                    <Dropdown.Item onClick={(e) => { e.preventDefault(); addToList(anime, 'aVisualizar'); }}>A visualizar</Dropdown.Item>
+                                    <Dropdown.Item onClick={(e) => { e.preventDefault(); addToList(anime, 'completado'); }}>Completado</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </div>
                     </div>
                 ))}
             </div>
+            {loading && <div>Carregando...</div>}
         </div>
     );
 }

@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+// src/Components/SearchAnimePage.tsx
+import React, { useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
 import { AnimeContext } from "../AnimeContext";
@@ -37,17 +38,17 @@ const SearchAnimePage: React.FC = () => {
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                       <Dropdown.Item
-                        onClick={() => addToList(anime, "Por visualizar")}
+                        onClick={(e) => { e.preventDefault(); addToList(anime, "porVisualizar"); }}
                       >
                         Por visualizar
                       </Dropdown.Item>
                       <Dropdown.Item
-                        onClick={() => addToList(anime, "A visualizar")}
+                        onClick={(e) => { e.preventDefault(); addToList(anime, "aVisualizar"); }}
                       >
                         A visualizar
                       </Dropdown.Item>
                       <Dropdown.Item
-                        onClick={() => addToList(anime, "Completado")}
+                        onClick={(e) => { e.preventDefault(); addToList(anime, "completado"); }}
                       >
                         Completado
                       </Dropdown.Item>

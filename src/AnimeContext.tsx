@@ -50,12 +50,18 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         completado: []
     });
 
+    const removeFromLists = (anime: Anime) => {
+        return {
+            porVisualizar: lists.porVisualizar.filter(a => a.mal_id !== anime.mal_id),
+            aVisualizar: lists.aVisualizar.filter(a => a.mal_id !== anime.mal_id),
+            completado: lists.completado.filter(a => a.mal_id !== anime.mal_id),
+        };
+    };
+
     const addToList = (anime: Anime, list: string) => {
         setLists(prevLists => {
-            const newList = { ...prevLists };
-            if (!newList[list].find(a => a.mal_id === anime.mal_id)) {
-                newList[list].push(anime);
-            }
+            const newList = removeFromLists(anime);
+            newList[list].push(anime);
             return newList;
         });
     };

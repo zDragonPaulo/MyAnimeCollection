@@ -1,3 +1,4 @@
+// src/Components/Navbar.tsx
 import React, { useState, useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
@@ -74,13 +75,23 @@ const Navbar: React.FC = () => {
           </form>
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <a className="nav-link" href="/user">
-                <img src="user.png" width="30" height="30" alt="Utilizador" />
+              <a className="nav-link" href="/profile">
+                Perfil
               </a>
             </li>
             <li className="nav-item">
-              <button className="btn btn-primary" onClick={saveListsToFile}>
-                Save Lists
+              <a className="nav-link" href="/login">
+                Login
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" href="/register">
+                Registrar
+              </a>
+            </li>
+            <li className="nav-item">
+              <button className="btn btn-secondary" onClick={saveListsToFile}>
+                Salvar Listas
               </button>
             </li>
           </ul>
