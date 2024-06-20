@@ -1,14 +1,17 @@
 // src/App.tsx
 import { Outlet } from "react-router-dom";
-import Navbar from './Components/Navbar';
-import { AnimeProvider } from './AnimeContext';
+import Navbar from "./Components/Navbar";
+import { AnimeProvider } from "./AnimeContext";
+import { UserProvider } from "./UserContext";
 
 function App() {
   return (
-    <AnimeProvider>
-      <Navbar />
-      <Outlet />
-    </AnimeProvider>
+    <UserProvider>
+      <AnimeProvider>
+        <Navbar />
+        <Outlet />
+      </AnimeProvider>
+    </UserProvider>
   );
 }
 

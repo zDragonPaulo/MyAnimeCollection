@@ -10,7 +10,7 @@ import AnimeDetail from './Components/AnimeDetail';
 import SearchAnimePage from './Components/SearchAnimePage';
 import LoginPage from './Components/LoginPage';
 import RegisterPage from './Components/RegisterPage';
-import UserProfilePage from './Components/UserProfilePage'; // Importar o novo componente
+import UserProfilePage from './Components/UserProfilePage';
 
 const router = createBrowserRouter([
   {
@@ -39,8 +39,10 @@ const router = createBrowserRouter([
         element: <RegisterPage />,
       },
       {
-        path: "profile", // Adicionar a nova rota
-        element: <UserProfilePage />,
+        path: "profile",
+        element: 
+          <UserProfilePage />
+        
       },
     ]
   },
