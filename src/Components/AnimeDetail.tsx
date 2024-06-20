@@ -6,6 +6,8 @@ interface AnimeDetail {
     title: string;
     score: number;
     synopsis: string;
+    episodes: number[];
+    genres: { name: string }[];
     images: {
         jpg: {
             image_url: string;
@@ -18,6 +20,8 @@ const AnimeDetail: React.FC = () => {
     const [anime, setAnime] = useState<AnimeDetail | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [prevSeason, setPrevSeason] = useState<number | null>(null);
+    const [nextSeason, setNextSeason] = useState<number | null>(null);
 
     useEffect(() => {
         fetch(`https://api.jikan.moe/v4/anime/${id}`)
@@ -33,8 +37,31 @@ const AnimeDetail: React.FC = () => {
             });
     }, [id]);
 
+    useEffect(() => {
+        if (anime && anime.episodes.length > 0) {
+            // Obter temporadas únicas
+            const seasons = anime.episodes.map(episode => episode.season);
+            seasons.sort((a, b) => a - b); // Classificar as temporadas em ordem crescente
+
+            // Encontrar a temporada anterior e a próxima temporada
+            const currentSeasonIndex = seasons.indexOf(anime.episodes[0].season);
+            if (currentSeasonIndex > 0) {
+                setPrevSeason(seasons[currentSeasonIndex - 1]);
+            }
+            if (currentSeasonIndex < seasons.length - 1) {
+                setNextSeason(seasons[currentSeasonIndex + 1]);
+            }
+        }
+    }, [anime]);
+
     if (loading) {
-        return <div>Carregando...</div>;
+        return <div>{loading && (
+            <div className="d-flex align-items-center">
+              <div className="mx-auto">
+              <img src="loading.gif" width="30" height="30" alt="Carregando" />
+              </div>
+            </div>
+          )}</div>;
     }
 
     if (error) {
@@ -53,7 +80,20 @@ const AnimeDetail: React.FC = () => {
                     <img src={anime.images.jpg.image_url} alt={anime.title} className="img-fluid" />
                 </div>
                 <div className="col-md-8">
+                    <h5>Gêneros:</h5>
+                    <ul>
+                        {anime.genres.map((genre, index) => (
+                            <li key={index}>{genre.name}</li>
+                        ))}
+                    </ul>
                     <h5>Avaliação: {anime.score}</h5>
+                    <h5>Número de Episódios: {anime.episodes}</h5>
+                    {prevSeason !== null && (
+                        <p>Temporada Anterior: {prevSeason}</p>
+                    )}
+                    {nextSeason !== null && (
+                        <p>Próxima Temporada: {nextSeason}</p>
+                    )}
                     <p>{anime.synopsis}</p>
                 </div>
             </div>
