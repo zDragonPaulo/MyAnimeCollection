@@ -1,11 +1,12 @@
-// src/Components/Navbar.tsx
 import React, { useState, useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { AnimeContext } from "../AnimeContext";
+import { FaUser, FaSignInAlt, FaUserPlus } from "react-icons/fa";
 
 const Navbar: React.FC = () => {
   const [query, setQuery] = useState<string>("");
+  const [isNavOpen, setIsNavOpen] = useState<boolean>(false); // Estado para controlar o menu responsivo
   const { setAnimes, setSearchPerformed, saveListsToFile } =
     useContext(AnimeContext);
   const navigate = useNavigate();
@@ -37,25 +38,24 @@ const Navbar: React.FC = () => {
     searchAnime(query);
   };
 
+  const toggleNav = () => {
+    setIsNavOpen(!isNavOpen);
+  };
+
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
         <a className="navbar-brand" href="/">
-          <img src="icon.png" width="30" height="30" alt="Logo" /> 𝓜𝔂 𝓐𝓷𝓲𝓶𝓮
-          𝓒𝓸𝓵𝓵𝓮𝓬𝓽𝓲𝓸𝓷
+          <img src="icon.png" width="30" height="30" alt="Logo" /> 𝓜𝔂 𝓐𝓷𝓲𝓶𝓮 𝓒𝓸𝓵𝓵𝓮𝓬𝓽𝓲𝓸𝓷
         </a>
         <button
           className="navbar-toggler"
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
+          onClick={toggleNav} // Toggle do menu responsivo
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
+        <div className={`collapse navbar-collapse ${isNavOpen ? "show" : ""}`} id="navbarNav">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0"></ul>
           <form
             className="d-flex mx-auto"
@@ -76,17 +76,17 @@ const Navbar: React.FC = () => {
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
             <li className="nav-item">
               <a className="nav-link" href="/profile">
-                Perfil
+                <FaUser /> Perfil
               </a>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="/login">
-                Iniciar Sessão
+                <FaSignInAlt /> Iniciar Sessão
               </a>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="/register">
-                Registar
+                <FaUserPlus /> Registar
               </a>
             </li>
             <li className="nav-item">

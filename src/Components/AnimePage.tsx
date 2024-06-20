@@ -33,7 +33,6 @@ const AnimePage: React.FC = () => {
   const { addToList, lists } = useContext(AnimeContext);
 
   useEffect(() => {
-    // Fetch initial animes
     fetchAnimes(1, true);
   }, []);
 
@@ -61,11 +60,13 @@ const AnimePage: React.FC = () => {
   };
 
   const handleScroll = () => {
+    console.log("Scroll detected");
     if (
-      window.innerHeight + window.scrollY >=
+      document.documentElement.clientHeight + window.scrollY >=
         document.documentElement.scrollHeight &&
       !loading
     ) {
+      console.log("Loading more animes");
       setPage((prevPage) => prevPage + 1);
     }
   };
@@ -151,7 +152,7 @@ const AnimePage: React.FC = () => {
       {loading && (
         <div className="d-flex align-items-center">
           <div className="mx-auto">
-          <img src="loading.gif" width="30" height="30" alt="Carregando" />
+            <img src="loading.gif" width="30" height="30" alt="Carregando" />
           </div>
         </div>
       )}
