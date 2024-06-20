@@ -24,7 +24,7 @@ const RegisterPage: React.FC = () => {
 
     return (
         <div className="container">
-            <h1 className="my-4">Registro</h1>
+            <h1 className="my-4">Registo</h1>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="email" className="form-label">Email</label>
@@ -60,7 +60,7 @@ const RegisterPage: React.FC = () => {
                     />
                 </div>
                 {error && <div className="alert alert-danger">{error}</div>}
-                <button type="submit" className="btn btn-primary">Registrar</button>
+                <button type="submit" className="btn btn-primary">Registar</button>
             </form>
         </div>
     );

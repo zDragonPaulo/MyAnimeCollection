@@ -81,12 +81,12 @@ const Navbar: React.FC = () => {
             </li>
             <li className="nav-item">
               <a className="nav-link" href="/login">
-                Login
+                Iniciar Sessão
               </a>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="/register">
-                Registrar
+                Registar
               </a>
             </li>
             <li className="nav-item">

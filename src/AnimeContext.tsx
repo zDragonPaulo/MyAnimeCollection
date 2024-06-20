@@ -20,8 +20,8 @@ interface AnimeContextType {
     setSearchPerformed: (performed: boolean) => void;
     addToList: (anime: Anime, list: string) => void;
     lists: {
-        porVisualizar: Anime[];
-        aVisualizar: Anime[];
+        porVer: Anime[];
+        aVer: Anime[];
         completado: Anime[];
     };
     saveListsToFile: () => void;
@@ -34,8 +34,8 @@ export const AnimeContext = createContext<AnimeContextType>({
     setSearchPerformed: () => {},
     addToList: () => {},
     lists: {
-        porVisualizar: [],
-        aVisualizar: [],
+        porVer: [],
+        aVer: [],
         completado: []
     },
     saveListsToFile: () => {}
@@ -45,15 +45,15 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const [animes, setAnimes] = useState<Anime[]>([]);
     const [searchPerformed, setSearchPerformed] = useState<boolean>(false);
     const [lists, setLists] = useState({
-        porVisualizar: [],
-        aVisualizar: [],
+        porVer: [],
+        aVer: [],
         completado: []
     });
 
     const removeFromLists = (anime: Anime) => {
         return {
-            porVisualizar: lists.porVisualizar.filter(a => a.mal_id !== anime.mal_id),
-            aVisualizar: lists.aVisualizar.filter(a => a.mal_id !== anime.mal_id),
+            porVer: lists.porVer.filter(a => a.mal_id !== anime.mal_id),
+            aVer: lists.aVer.filter(a => a.mal_id !== anime.mal_id),
             completado: lists.completado.filter(a => a.mal_id !== anime.mal_id),
         };
     };
