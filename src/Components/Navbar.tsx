@@ -8,7 +8,7 @@ import { FaUser, FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
 const Navbar: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
-  const { setAnimes, setSearchPerformed, saveListsToFile } = useContext(AnimeContext);
+  const { setAnimes, setSearchPerformed, saveListsToRestDB } = useContext(AnimeContext);
   const { user, logout } = useUser();
   const navigate = useNavigate();
 
@@ -81,6 +81,11 @@ const Navbar: React.FC = () => {
                     <FaSignOutAlt /> Sair
                   </button>
                 </li>
+                <li className="nav-item">
+                  <button className="btn btn-secondary" onClick={saveListsToRestDB}>
+                    Salvar Listas
+                  </button>
+                </li>
               </>
             ) : (
               <>
@@ -96,11 +101,6 @@ const Navbar: React.FC = () => {
                 </li>
               </>
             )}
-            <li className="nav-item">
-              <button className="btn btn-secondary" onClick={saveListsToFile}>
-                Salvar Listas
-              </button>
-            </li>
           </ul>
         </div>
       </div>

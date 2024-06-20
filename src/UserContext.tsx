@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, FC } 
 import { useNavigate } from 'react-router-dom';
 
 interface User {
+  id_utilizador: number; // Ajustado para refletir a propriedade correta
   username: string;
   email: string;
   password?: string; // Adicione a senha para o contexto do usuário se necessário
@@ -49,7 +50,7 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
   );
 };
 
-export const useUser = (): UserContextType => {
+export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {
     throw new Error('useUser must be used within a UserProvider');
