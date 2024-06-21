@@ -11,6 +11,7 @@ import SearchAnimePage from './Components/SearchAnimePage';
 import LoginPage from './Components/LoginPage';
 import RegisterPage from './Components/RegisterPage';
 import UserProfilePage from './Components/UserProfilePage';
+import AnimeListPage from './Components/AnimeListPage';
 
 const router = createBrowserRouter([
   {
@@ -40,9 +41,11 @@ const router = createBrowserRouter([
       },
       {
         path: "profile",
-        element: 
-          <UserProfilePage />
-        
+        element: <UserProfilePage />
+      },
+      {
+        path: "list/:listName",
+        element: <AnimeListPage />
       },
     ]
   },

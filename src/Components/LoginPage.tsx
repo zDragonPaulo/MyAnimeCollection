@@ -14,19 +14,24 @@ const LoginPage: React.FC = () => {
     event.preventDefault();
 
     try {
-      const response = await fetch(`https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"email":"${email}"}`, {
-        method: "GET",
-        headers: {
-          "x-apikey": "66744406f85595d7d606accb",
-          "Content-Type": "application/json",
-        },
-      });
+      console.log("Fetching user data...");
+      const response = await fetch(
+        `https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"email":"${email}"}`,
+        {
+          method: "GET",
+          headers: {
+            "x-apikey": "66744406f85595d7d606accb",
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Erro ao buscar usuários");
       }
 
       const data = await response.json();
+      console.log("User data fetched:", data);
 
       if (data.length === 0) {
         setError("Usuário não encontrado");
@@ -34,6 +39,7 @@ const LoginPage: React.FC = () => {
       }
 
       const userTest = data[0];
+      console.log("Fetched user:", userTest);
 
       if (userTest.password === password) {
         delete userTest.password; // Remover a senha antes de definir o usuário

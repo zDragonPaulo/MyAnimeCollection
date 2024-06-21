@@ -8,7 +8,7 @@ import { FaUser, FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
 const Navbar: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
-  const { setAnimes, setSearchPerformed, saveListsToFile } = useContext(AnimeContext);
+  const { setAnimes, setSearchPerformed, saveListsToRestDB } = useContext(AnimeContext);
   const { user, logout } = useUser();
   const navigate = useNavigate();
 
@@ -43,6 +43,12 @@ const Navbar: React.FC = () => {
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
+  };
+
+  const handleSaveLists = async () => {
+    console.log("Botão de salvar listas clicado");
+    await saveListsToRestDB();
+    console.log("Função saveListsToRestDB chamada");
   };
 
   return (
@@ -97,7 +103,7 @@ const Navbar: React.FC = () => {
               </>
             )}
             <li className="nav-item">
-              <button className="btn btn-secondary" onClick={saveListsToFile}>
+              <button className="btn btn-secondary" onClick={handleSaveLists}>
                 Salvar Listas
               </button>
             </li>
