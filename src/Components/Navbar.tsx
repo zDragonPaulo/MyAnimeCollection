@@ -137,6 +137,11 @@ const Navbar: React.FC = () => {
                     <FaSignOutAlt /> Sair
                   </button>
                 </li>
+                <li className="nav-item">
+                  <button className="btn btn-secondary" onClick={saveListsToRestDB}>
+                    Salvar Listas
+                  </button>
+                </li>
               </>
             ) : (
               <>

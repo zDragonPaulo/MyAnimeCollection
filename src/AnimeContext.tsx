@@ -10,6 +10,14 @@ interface Anime {
       image_url: string;
     };
   };
+  mal_id: number;
+  title: string;
+  score: number;
+  images: {
+    jpg: {
+      image_url: string;
+    };
+  };
 }
 
 interface AnimeContextType {
@@ -65,7 +73,21 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       completado: lists.completado.filter(a => a.mal_id !== anime.mal_id),
     };
   };
+  const removeFromLists = (anime: Anime) => {
+    return {
+      porVer: lists.porVer.filter(a => a.mal_id !== anime.mal_id),
+      aVer: lists.aVer.filter(a => a.mal_id !== anime.mal_id),
+      completado: lists.completado.filter(a => a.mal_id !== anime.mal_id),
+    };
+  };
 
+  const addToList = (anime: Anime, list: string) => {
+    setLists(prevLists => {
+      const newList = removeFromLists(anime);
+      newList[list].push(anime);
+      return newList;
+    });
+  };
   const addToList = (anime: Anime, list: string) => {
     setLists(prevLists => {
       const newList = removeFromLists(anime);

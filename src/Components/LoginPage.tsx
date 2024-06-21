@@ -43,7 +43,12 @@ const LoginPage: React.FC = () => {
 
       if (userTest.password === password) {
         delete userTest.password; // Remover a senha antes de definir o usuário
-        setUser(userTest);
+        setUser({
+          id_utilizador: userTest.id_utilizador, // Usar a propriedade correta
+          username: userTest.nome,
+          email: userTest.email,
+          // Adicione outras propriedades conforme necessário
+        });
         navigate("/profile"); // Redirecionamento após login bem-sucedido
       } else {
         setError("Credenciais inválidas");
