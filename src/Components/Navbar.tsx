@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AnimeContext } from "../AnimeContext";
 import { useUser } from "../UserContext";
 import { FaUser, FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
-
+import logo from '/src/assets/icon.png';
 const Navbar: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
@@ -97,7 +97,7 @@ const Navbar: React.FC = () => {
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
         <a className="navbar-brand" href="/">
-          <img src="icon.png" width="30" height="30" alt="Logo" /> 𝓜𝔂 𝓐𝓷𝓲𝓶𝓮 𝓒𝓸𝓵𝓵𝓮𝓬𝓽𝓲𝓸𝓷
+          <img src={logo} width="30" height="30" alt="Logo" /> 𝓜𝔂 𝓐𝓷𝓲𝓶𝓮 𝓒𝓸𝓵𝓵𝓮𝓬𝓽𝓲𝓸𝓷
         </a>
         <button className="navbar-toggler" type="button" onClick={toggleNav}>
           <span className="navbar-toggler-icon"></span>

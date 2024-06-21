@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link, useParams } from "react-router-dom";
-import { Dropdown } from "react-bootstrap";
-import { useUser } from "../UserContext";
 import { AnimeContext } from "../AnimeContext";
-import { FaCheck } from "react-icons/fa";
 import "./images.css"; // Ensure this CSS file contains styles for fixed-image and other necessary styles
+import userImage from '/src/assets/user.png';
 
 interface Anime {
   mal_id: number;
@@ -85,7 +83,6 @@ const UserProfilePage: React.FC = () => {
     }
   };
 
-  const userImage = "user.png";
 
   return (
     <div className="container">
