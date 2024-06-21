@@ -28,14 +28,18 @@ interface User {
 
 const UserProfilePage: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Obter o ID do utilizador da URL
-  const { user } = useUser();
-  const { lists, addToList } = useContext(AnimeContext);
+  const { fetchAnimeListsByUserId } = useContext(AnimeContext);
   const [userName, setUserName] = useState<string | null>(null);
   const [birthday, setBirthday] = useState<string | null>(null);
   const [bio, setBio] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [lists, setLists] = useState({
+    porVer: [],
+    aVer: [],
+    completado: []
+  });
 
   useEffect(() => {
     fetchUserData();
@@ -46,11 +50,11 @@ const UserProfilePage: React.FC = () => {
     setLoadingMessage("Carregando informações do usuário, por favor, aguarde...");
     try {
       const response = await fetch(
-        `https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"id_utilizador":${id}}`,
+        `https://myanimecollection-cdd2.restdb.io/rest/animeusers?q={"id_utilizador":${id}}`,
         {
           method: "GET",
           headers: {
-            "x-apikey": "66744406f85595d7d606accb",
+            "x-apikey": "6675a683be0bc8beb8eafe89",
             "Content-Type": "application/json",
           },
         }
@@ -67,6 +71,8 @@ const UserProfilePage: React.FC = () => {
         setBirthday(data[0].aniversario);
         setBio("Eu adoro anime!");
         setError(null);
+        const animeLists = await fetchAnimeListsByUserId(data[0].id_utilizador);
+        setLists(animeLists);
       } else {
         setUserName(null);
         setError("Usuário não encontrado");
@@ -119,18 +125,18 @@ const UserProfilePage: React.FC = () => {
       )}
 
       <div className="row mt-4">
-        {renderAnimeList("Por Ver", lists.porVer, addToList)}
-        {renderAnimeList("A Ver", lists.aVer, addToList)}
-        {renderAnimeList("Completado", lists.completado, addToList)}
+        {renderAnimeList(id!, "Por Ver", lists.porVer, () => {})}
+        {renderAnimeList(id!, "A Ver", lists.aVer, () => {})}
+        {renderAnimeList(id!, "Completado", lists.completado, () => {})}
       </div>
     </div>
   );
 };
 
-const renderAnimeList = (title: string, animes: Anime[], addToList: (anime: Anime, list: string) => void) => (
+const renderAnimeList = (userId: string, title: string, animes: Anime[], addToList: (anime: Anime, list: string) => void) => (
   <div className="col-12 mb-4">
     <h5>
-      <Link to={`/list/${title.toLowerCase().replace(" ", "-")}`}>{title}</Link>
+      <Link to={`/user/${userId}/list/${title.toLowerCase().replace(" ", "-")}`}>{title}</Link>
     </h5>
     <div className="row">
       {animes.slice(0, 4).map((anime) => (
@@ -147,16 +153,6 @@ const renderAnimeList = (title: string, animes: Anime[], addToList: (anime: Anim
               <h5 className="card-title">{anime.title}</h5>
               <p className="card-text">Avaliação: {anime.score}</p>
             </div>
-            <Dropdown className="position-absolute" style={{ bottom: 10, right: 10 }}>
-              <Dropdown.Toggle variant="success" id="dropdown-basic">
-                <FaCheck />
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item onClick={(e) => { e.preventDefault(); addToList(anime, "porVer"); }}>Por Ver</Dropdown.Item>
-                <Dropdown.Item onClick={(e) => { e.preventDefault(); addToList(anime, "aVer"); }}>A Ver</Dropdown.Item>
-                <Dropdown.Item onClick={(e) => { e.preventDefault(); addToList(anime, "completado"); }}>Completado</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
           </div>
         </div>
       ))}

@@ -35,13 +35,13 @@ const Navbar: React.FC = () => {
 
   const searchUsers = async (query: string) => {
     try {
-      const apiUrl = `https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"nome":"${query}"}`;
+      const apiUrl = `https://myanimecollection-cdd2.restdb.io/rest/animeusers?q={"nome":"${query}"}`;
       console.log("URL da API:", apiUrl);
   
       const response = await fetch(apiUrl, {
         method: "GET",
         headers: {
-          "x-apikey": "66744406f85595d7d606accb",
+          "x-apikey": "6675a683be0bc8beb8eafe89",
           "Content-Type": "application/json",
         },
         mode: 'cors',
@@ -103,10 +103,10 @@ const Navbar: React.FC = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className={`collapse navbar-collapse ${isNavOpen ? "show" : ""}`} id="navbarNav">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0"></ul>
-          <form className="d-flex mx-auto" onSubmit={handleSubmit} style={{ maxWidth: "400px" }}>
+          <ul className="navbar-nav me-auto mb-6 mb-lg-0"></ul>
+          <form className="d-flex mx-auto" onSubmit={handleSubmit} style={{ maxWidth: "600px" }}>
             <select
-              className="form-select me-2"
+              className="form-select me-4"
               value={searchType}
               onChange={(e) => setSearchType(e.target.value)}
             >
@@ -115,8 +115,8 @@ const Navbar: React.FC = () => {
             </select>
             <input
               type="search"
-              placeholder={`Diga o nome ${searchType === "animes" ? "do anime" : "do utilizador"}...`}
-              className="form-control me-2"
+              placeholder={`Pesquisa...`}
+              className="form-control me-4"
               value={query}
               onChange={handleInputChange}
             />
@@ -135,11 +135,6 @@ const Navbar: React.FC = () => {
                 <li className="nav-item">
                   <button className="btn btn-link nav-link" onClick={handleLogout}>
                     <FaSignOutAlt /> Sair
-                  </button>
-                </li>
-                <li className="nav-item">
-                  <button className="btn btn-secondary" onClick={saveListsToRestDB}>
-                    Salvar Listas
                   </button>
                 </li>
               </>

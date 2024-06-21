@@ -10,14 +10,6 @@ interface Anime {
       image_url: string;
     };
   };
-  mal_id: number;
-  title: string;
-  score: number;
-  images: {
-    jpg: {
-      image_url: string;
-    };
-  };
 }
 
 interface AnimeContextType {
@@ -82,7 +74,52 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       return newList;
     });
   };
+  const fetchAnimeListsByUserId = async (userId: number) => {
+    try {
+      const response = await fetch(
+        `https://myanimecollection-cdd2.restdb.io/rest/listasanimes?q={"id_utilizador":${userId}}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-apikey': '6675a683be0bc8beb8eafe89'
+          }
+        }
+      );
 
+      if (!response.ok) {
+        throw new Error('Erro ao buscar listas de animes');
+      }
+
+      const data = await response.json();
+      console.log('Listas de animes buscadas:', data);
+
+      const newLists = {
+        porVer: [],
+        aVer: [],
+        completado: []
+      };
+
+      data.forEach((list: any) => {
+        if (list.id_lista === 1) {
+          newLists.porVer = list.lista_animes;
+        } else if (list.id_lista === 2) {
+          newLists.aVer = list.lista_animes;
+        } else if (list.id_lista === 3) {
+          newLists.completado = list.lista_animes;
+        }
+      });
+
+      return newLists;
+    } catch (error) {
+      console.error('Erro ao buscar listas de animes:', error);
+      return {
+        porVer: [],
+        aVer: [],
+        completado: []
+      };
+    }
+  };
 
   const saveListsToRestDB = async () => {
     if (!user || !user.id_utilizador) {
@@ -100,12 +137,12 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       for (const data of dataToSave) {
         console.log(`Verificando lista com id_utilizador: ${user.id_utilizador} e id_lista: ${data.id_lista}`);
         const checkResponse = await fetch(
-          `https://myanimecollection-7a81.restdb.io/rest/listasanimes?q={"id_utilizador":${user.id_utilizador},"id_lista":${data.id_lista}}`,
+          `https://myanimecollection-cdd2.restdb.io/rest/listasanimes?q={"id_utilizador":${user.id_utilizador},"id_lista":${data.id_lista}}`,
           {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              'x-apikey': '66744406f85595d7d606accb'
+              'x-apikey': '6675a683be0bc8beb8eafe89'
             },
           }
         );
@@ -120,17 +157,17 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         console.log(`Listas existentes: ${JSON.stringify(existingLists)}`);
   
         let method = 'POST';
-        let url = 'https://myanimecollection-7a81.restdb.io/rest/listasanimes';
+        let url = 'https://myanimecollection-cdd2.restdb.io/rest/listasanimes';
         if (existingLists.length > 0) {
           method = 'PATCH';
-          url = `https://myanimecollection-7a81.restdb.io/rest/listasanimes/${existingLists[0]._id}`;
+          url = `https://myanimecollection-cdd2.restdb.io/rest/listasanimes/${existingLists[0]._id}`;
         }
   
         const response = await fetch(url, {
           method: method,
           headers: {
             'Content-Type': 'application/json',
-            'x-apikey': '66744406f85595d7d606accb'
+            'x-apikey': '6675a683be0bc8beb8eafe89'
           },
           body: JSON.stringify(data)
         });
@@ -155,12 +192,12 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     try {
       const response = await fetch(
-        `https://myanimecollection-7a81.restdb.io/rest/listasanimes?q={"id_utilizador":${user.id_utilizador}}`,
+        `https://myanimecollection-cdd2.restdb.io/rest/listasanimes?q={"id_utilizador":${user.id_utilizador}}`,
         {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'x-apikey': '66744406f85595d7d606accb'
+            'x-apikey': '6675a683be0bc8beb8eafe89'
           }
         }
       );
@@ -195,7 +232,7 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   return (
-    <AnimeContext.Provider value={{ animes, setAnimes, searchPerformed, setSearchPerformed, addToList, lists, saveListsToRestDB, fetchAnimeLists }}>
+    <AnimeContext.Provider value={{ animes, setAnimes, searchPerformed, setSearchPerformed, addToList, lists, saveListsToRestDB, fetchAnimeLists, fetchAnimeListsByUserId }}>
       {children}
     </AnimeContext.Provider>
   );

@@ -29,11 +29,11 @@ const RegisterPage: React.FC = () => {
 
     try {
       const response = await fetch(
-        "https://myanimecollection-7a81.restdb.io/rest/animeusers",
+        "https://myanimecollection-cdd2.restdb.io/rest/animeusers",
         {
           method: "POST",
           headers: {
-            "x-apikey": "66744406f85595d7d606accb",
+            "x-apikey": "6675a683be0bc8beb8eafe89",
             "Content-Type": "application/json",
           },
           body: JSON.stringify(userData),

@@ -48,7 +48,7 @@ const router = createBrowserRouter([
         element: <UserProfilePage />
       },
       {
-        path: "list/:listName",
+        path: "user/:id/list/:listName",
         element: <AnimeListPage />
       },
     ]

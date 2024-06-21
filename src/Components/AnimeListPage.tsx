@@ -1,19 +1,35 @@
-import React, { useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { AnimeContext } from '../AnimeContext';
-import { Link } from 'react-router-dom';
 
 const AnimeListPage: React.FC = () => {
-  const { listName } = useParams<{ listName: string }>();
-  const { lists } = useContext(AnimeContext);
+  const { id, listName } = useParams<{ id: string, listName: string }>();
+  const { fetchAnimeListsByUserId } = useContext(AnimeContext);
+  const [lists, setLists] = useState({
+    porVer: [],
+    aVer: [],
+    completado: []
+  });
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  console.log("Nome da lista recebido dos parâmetros:", listName);
-  console.log("Listas disponíveis no contexto:", Object.keys(lists));
+  useEffect(() => {
+    const fetchLists = async () => {
+      setIsLoading(true);
+      try {
+        const animeLists = await fetchAnimeListsByUserId(Number(id));
+        setLists(animeLists);
+      } catch (error) {
+        setError("Erro ao buscar listas de animes");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  // Normalizando o nome da lista para comparação
+    fetchLists();
+  }, [id]);
+
   const normalizedListName = listName?.toLowerCase().replace("-", " ");
-
-  // Mapeando o nome normalizado para o nome da lista no contexto
   const listMapping: { [key: string]: keyof typeof lists } = {
     "por ver": "porVer",
     "a ver": "aVer",
@@ -23,10 +39,17 @@ const AnimeListPage: React.FC = () => {
   const listKey = listMapping[normalizedListName as keyof typeof listMapping];
   const list = lists[listKey];
 
-  // Função para colocar a primeira letra de cada palavra em maiúscula
   const capitalizeFirstLetter = (str: string) => {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
   };
+
+  if (isLoading) {
+    return <h5>Carregando listas...</h5>;
+  }
+
+  if (error) {
+    return <h5>{error}</h5>;
+  }
 
   if (!list) {
     return <h5>Lista não encontrada</h5>;
