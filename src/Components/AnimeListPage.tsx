@@ -29,6 +29,19 @@ const AnimeListPage: React.FC = () => {
     fetchLists();
   }, [id]);
 
+  const renderStars = (score: number) => {
+    const stars = Math.round(score / 2); // Converter pontuação de 0-10 para 0-5
+    return (
+        <div>
+            {Array.from({ length: 5 }, (_, index) => (
+                <span key={index}>
+                    {index < stars ? '★' : '☆'}
+                </span>
+            ))}
+        </div>
+    );
+};
+
   const normalizedListName = listName?.toLowerCase().replace("-", " ");
   const listMapping: { [key: string]: keyof typeof lists } = {
     "por ver": "porVer",
@@ -71,7 +84,7 @@ const AnimeListPage: React.FC = () => {
               </Link>
               <div className="card-body">
                 <h5 className="card-title">{anime.title}</h5>
-                <p className="card-text">Avaliação: {anime.score}</p>
+                <p className="card-text">Avaliação: {renderStars(anime.score)}</p>
               </div>
             </div>
           </div>

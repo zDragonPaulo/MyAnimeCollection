@@ -30,6 +30,8 @@ const UserProfilePage: React.FC = () => {
   const [userName, setUserName] = useState<string | null>(null);
   const [birthday, setBirthday] = useState<string | null>(null);
   const [bio, setBio] = useState<string | null>(null);
+  const [userRating, setUserRating] = useState<number | null>(null);
+  const [showRatingForm, setShowRatingForm] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -83,6 +85,74 @@ const UserProfilePage: React.FC = () => {
     }
   };
 
+  const renderStars = (score: number) => {
+    const stars = Math.round(score / 2); // Converter pontuação de 0-10 para 0-5
+    return (
+      <div>
+        {Array.from({ length: 5 }, (_, index) => (
+          <span key={index}>
+            {index < stars ? '★' : '☆'}
+          </span>
+        ))}
+      </div>
+    );
+  };
+
+  const renderRatingStars = () => {
+    return (
+      <div>
+        {Array.from({ length: 5 }, (_, index) => (
+          <span
+            key={index}
+            style={{ cursor: 'pointer' }}
+            onClick={() => setUserRating(index + 1)}
+          >
+            {index < (userRating ?? 0) ? '★' : '☆'}
+          </span>
+        ))}
+      </div>
+    );
+  };
+
+  const submitUserRating = () => {
+    if (userRating !== null) {
+      alert(`Você avaliou este anime com ${userRating} estrelas!`);
+      setShowRatingForm(false);
+    }
+  };
+
+  const renderAnimeList = (userId: string, title: string, animes: Anime[], addToList: (anime: Anime, list: string) => void) => (
+    <div className="col-12 mb-4">
+      <h5>
+        <Link to={`/user/${userId}/list/${title.toLowerCase().replace(" ", "-")}`}>{title}</Link>
+      </h5>
+      <div className="row">
+        {animes.slice(0, 4).map((anime) => (
+          <div key={anime.mal_id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div className="card h-100 position-relative">
+              <Link to={`/anime/${anime.mal_id}`}>
+                <img
+                  src={anime.images.jpg.image_url}
+                  alt={anime.title}
+                  className="card-img-top fixed-image"
+                />
+              </Link>
+              <div className="card-body">
+                <h5 className="card-title">{anime.title}</h5>
+                <p className="card-text">Avaliação: {renderStars(anime.score)}</p>
+                {showRatingForm && (
+                  <div>
+                    {renderRatingStars()}
+                    <button className="btn btn-secondary" onClick={submitUserRating}>Enviar Avaliação</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <div className="container">
@@ -129,32 +199,5 @@ const UserProfilePage: React.FC = () => {
     </div>
   );
 };
-
-const renderAnimeList = (userId: string, title: string, animes: Anime[], addToList: (anime: Anime, list: string) => void) => (
-  <div className="col-12 mb-4">
-    <h5>
-      <Link to={`/user/${userId}/list/${title.toLowerCase().replace(" ", "-")}`}>{title}</Link>
-    </h5>
-    <div className="row">
-      {animes.slice(0, 4).map((anime) => (
-        <div key={anime.mal_id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-          <div className="card h-100 position-relative">
-            <Link to={`/anime/${anime.mal_id}`}>
-              <img
-                src={anime.images.jpg.image_url}
-                alt={anime.title}
-                className="card-img-top fixed-image"
-              />
-            </Link>
-            <div className="card-body">
-              <h5 className="card-title">{anime.title}</h5>
-              <p className="card-text">Avaliação: {anime.score}</p>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
 
 export default UserProfilePage;

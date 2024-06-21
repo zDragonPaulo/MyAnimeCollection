@@ -6,10 +6,10 @@ interface AnimeDetail {
     title: string;
     score: number;
     synopsis: string;
-    episodes: number[];
+    episodes: { season: number }[];
     genres: { name: string }[];
     images: {
-        jpg: {
+        jpg: { 
             image_url: string;
         };
     };
@@ -22,6 +22,8 @@ const AnimeDetail: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [prevSeason, setPrevSeason] = useState<number | null>(null);
     const [nextSeason, setNextSeason] = useState<number | null>(null);
+    const [userRating, setUserRating] = useState<number | null>(null);
+    const [showRatingForm, setShowRatingForm] = useState<boolean>(false);
 
     useEffect(() => {
         fetch(`https://api.jikan.moe/v4/anime/${id}`)
@@ -40,11 +42,13 @@ const AnimeDetail: React.FC = () => {
     useEffect(() => {
         if (anime && anime.episodes.length > 0) {
             // Obter temporadas únicas
-            const seasons = anime.episodes.map(episode => episode.season);
+            const seasons = Array.from(new Set(anime.episodes.map(episode => episode.season)));
             seasons.sort((a, b) => a - b); // Classificar as temporadas em ordem crescente
 
             // Encontrar a temporada anterior e a próxima temporada
-            const currentSeasonIndex = seasons.indexOf(anime.episodes[0].season);
+            const currentSeason = anime.episodes[0].season;
+            const currentSeasonIndex = seasons.indexOf(currentSeason);
+
             if (currentSeasonIndex > 0) {
                 setPrevSeason(seasons[currentSeasonIndex - 1]);
             }
@@ -54,14 +58,50 @@ const AnimeDetail: React.FC = () => {
         }
     }, [anime]);
 
-    if (loading) {
-        return <div>{loading && (
-            <div className="d-flex align-items-center">
-              <div className="mx-auto">
-              <img src="loading.gif" width="30" height="30" alt="Carregando" />
-              </div>
+    const renderStars = (score: number) => {
+        const stars = Math.round(score / 2); // Converter pontuação de 0-10 para 0-5
+        return (
+            <div>
+                {Array.from({ length: 5 }, (_, index) => (
+                    <span key={index}>
+                        {index < stars ? '★' : '☆'}
+                    </span>
+                ))}
             </div>
-          )}</div>;
+        );
+    };
+
+    const renderRatingStars = () => {
+        return (
+            <div>
+                {Array.from({ length: 5 }, (_, index) => (
+                    <span
+                        key={index}
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setUserRating(index + 1)}
+                    >
+                        {index < (userRating ?? 0) ? '★' : '☆'}
+                    </span>
+                ))}
+            </div>
+        );
+    };
+
+    const submitUserRating = () => {
+        if (userRating !== null) {
+            alert(`Você avaliou este anime com ${userRating} estrelas!`);
+            setShowRatingForm(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="d-flex align-items-center">
+                <div className="mx-auto">
+                    <img src="loading.gif" width="30" height="30" alt="Carregando" />
+                </div>
+            </div>
+        );
     }
 
     if (error) {
@@ -86,14 +126,24 @@ const AnimeDetail: React.FC = () => {
                             <li key={index}>{genre.name}</li>
                         ))}
                     </ul>
-                    <h5>Avaliação: {anime.score}</h5>
-                    <h5>Número de Episódios: {anime.episodes}</h5>
+                    <h5>Avaliação: {renderStars(anime.score)}</h5>
+                    <button className="btn btn-secondary" onClick={() => setShowRatingForm(!showRatingForm)}>
+                        Avaliar
+                    </button>
+                    {showRatingForm && (
+                        <div>
+                            {renderRatingStars()}
+                            <button className="btn btn-secondary" onClick={submitUserRating}>Enviar Avaliação</button>
+                        </div>
+                    )}
+                    <h5>Número de Episódios: {anime.episodes.length}</h5>
                     {prevSeason !== null && (
                         <p>Temporada Anterior: {prevSeason}</p>
                     )}
                     {nextSeason !== null && (
                         <p>Próxima Temporada: {nextSeason}</p>
                     )}
+                    <h5>Sinopse:</h5>
                     <p>{anime.synopsis}</p>
                 </div>
             </div>
