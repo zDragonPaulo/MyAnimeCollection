@@ -73,13 +73,7 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       completado: lists.completado.filter(a => a.mal_id !== anime.mal_id),
     };
   };
-  const removeFromLists = (anime: Anime) => {
-    return {
-      porVer: lists.porVer.filter(a => a.mal_id !== anime.mal_id),
-      aVer: lists.aVer.filter(a => a.mal_id !== anime.mal_id),
-      completado: lists.completado.filter(a => a.mal_id !== anime.mal_id),
-    };
-  };
+ 
 
   const addToList = (anime: Anime, list: string) => {
     setLists(prevLists => {
@@ -88,13 +82,7 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       return newList;
     });
   };
-  const addToList = (anime: Anime, list: string) => {
-    setLists(prevLists => {
-      const newList = removeFromLists(anime);
-      newList[list].push(anime);
-      return newList;
-    });
-  };
+
 
   const saveListsToRestDB = async () => {
     if (!user || !user.id_utilizador) {
