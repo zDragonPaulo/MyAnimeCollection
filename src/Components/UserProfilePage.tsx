@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Dropdown } from "react-bootstrap";
 import { useUser } from "../UserContext";
 import { AnimeContext } from "../AnimeContext";
@@ -18,7 +18,16 @@ interface Anime {
   };
 }
 
+interface User {
+  id_utilizador: number;
+  nome: string;
+  email: string;
+  aniversario: string;
+  // Adicione outras propriedades conforme necessário
+}
+
 const UserProfilePage: React.FC = () => {
+  const { id } = useParams<{ id: string }>(); // Obter o ID do utilizador da URL
   const { user } = useUser();
   const { lists, addToList } = useContext(AnimeContext);
   const [userName, setUserName] = useState<string | null>(null);
@@ -30,14 +39,14 @@ const UserProfilePage: React.FC = () => {
 
   useEffect(() => {
     fetchUserData();
-  }, [user]);
+  }, [id]);
 
   const fetchUserData = async () => {
     setIsLoading(true);
     setLoadingMessage("Carregando informações do usuário, por favor, aguarde...");
     try {
       const response = await fetch(
-        `https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"email":"${user.email}"}`,
+        `https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"id_utilizador":${id}}`,
         {
           method: "GET",
           headers: {
@@ -55,8 +64,8 @@ const UserProfilePage: React.FC = () => {
 
       if (data.length > 0) {
         setUserName(data[0].nome);
-        setBirthday(data[0].aniversario); // Set birthday
-        setBio("Eu adoro anime!"); // Set bio
+        setBirthday(data[0].aniversario);
+        setBio("Eu adoro anime!");
         setError(null);
       } else {
         setUserName(null);
@@ -154,6 +163,5 @@ const renderAnimeList = (title: string, animes: Anime[], addToList: (anime: Anim
     </div>
   </div>
 );
-
 
 export default UserProfilePage;

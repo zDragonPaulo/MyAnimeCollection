@@ -1,4 +1,3 @@
-// src/main.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -12,6 +11,7 @@ import LoginPage from './Components/LoginPage';
 import RegisterPage from './Components/RegisterPage';
 import UserProfilePage from './Components/UserProfilePage';
 import AnimeListPage from './Components/AnimeListPage';
+import UserSearchResults from './Components/UserSearchResults'; // Importando o novo componente
 
 const router = createBrowserRouter([
   {
@@ -32,6 +32,10 @@ const router = createBrowserRouter([
         element: <SearchAnimePage />,
       },
       {
+        path: "user-search-results", // Adicionando a nova rota
+        element: <UserSearchResults />,
+      },
+      {
         path: "login",
         element: <LoginPage />,
       },
@@ -40,7 +44,7 @@ const router = createBrowserRouter([
         element: <RegisterPage />,
       },
       {
-        path: "profile",
+        path: "user/:id", // Rota para visualizar perfil do utilizador com base no ID
         element: <UserProfilePage />
       },
       {

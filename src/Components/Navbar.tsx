@@ -8,6 +8,7 @@ import { FaUser, FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
 const Navbar: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
+  const [searchType, setSearchType] = useState<string>("animes");
   const { setAnimes, setSearchPerformed, saveListsToRestDB } = useContext(AnimeContext);
   const { user, logout } = useUser();
   const navigate = useNavigate();
@@ -32,13 +33,54 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const searchUsers = async (query: string) => {
+    try {
+      const apiUrl = `https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"nome":"${query}"}`;
+      console.log("URL da API:", apiUrl);
+  
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          "x-apikey": "66744406f85595d7d606accb",
+          "Content-Type": "application/json",
+        },
+        mode: 'cors',
+        cache: 'no-cache',
+      });
+  
+      if (!response.ok) {
+        throw new Error("Erro ao buscar utilizadores");
+      }
+  
+      console.log("Resposta bruta da API:", response);
+  
+      const data = await response.json();
+      console.log("Dados JSON da API:", data);
+  
+      if (data.length === 0) {
+        console.warn("Nenhum utilizador encontrado para a query:", query);
+      }
+  
+      navigate("/user-search-results", { state: { users: data } });
+    } catch (error) {
+      console.error("Erro ao buscar utilizadores:", error);
+    }
+  };
+  
+  
+  
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    searchAnime(query);
+    if (searchType === "animes") {
+      searchAnime(query);
+    } else if (searchType === "users") {
+      searchUsers(query);
+    }
   };
 
   const toggleNav = () => {
@@ -63,9 +105,17 @@ const Navbar: React.FC = () => {
         <div className={`collapse navbar-collapse ${isNavOpen ? "show" : ""}`} id="navbarNav">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0"></ul>
           <form className="d-flex mx-auto" onSubmit={handleSubmit} style={{ maxWidth: "400px" }}>
+            <select
+              className="form-select me-2"
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value)}
+            >
+              <option value="animes">Animes</option>
+              <option value="users">Utilizadores</option>
+            </select>
             <input
               type="search"
-              placeholder="Diga o nome anime..."
+              placeholder={`Diga o nome ${searchType === "animes" ? "do anime" : "do utilizador"}...`}
               className="form-control me-2"
               value={query}
               onChange={handleInputChange}
@@ -78,7 +128,7 @@ const Navbar: React.FC = () => {
             {user ? (
               <>
                 <li className="nav-item">
-                  <a className="nav-link" href="/profile">
+                  <a className="nav-link" href={`/user/${user.id_utilizador}`}>
                     <FaUser /> Perfil
                   </a>
                 </li>
