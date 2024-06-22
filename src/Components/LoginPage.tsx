@@ -16,11 +16,11 @@ const LoginPage: React.FC = () => {
     try {
       console.log("Fetching user data...");
       const response = await fetch(
-        `https://myanimecollection-cdd2.restdb.io/rest/animeusers?q={"email":"${email}"}`,
+        `https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"email":"${email}"}`,
         {
           method: "GET",
           headers: {
-            "x-apikey": "6675a683be0bc8beb8eafe89",
+            "x-apikey": "66744406f85595d7d606accb",
             "Content-Type": "application/json",
           },
         }
