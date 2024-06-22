@@ -5,6 +5,7 @@ import { AnimeContext } from "../AnimeContext";
 import { useUser } from "../UserContext";
 import { FaUser, FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
 import logo from '/src/assets/icon.png';
+
 const Navbar: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [isNavOpen, setIsNavOpen] = useState<boolean>(false);

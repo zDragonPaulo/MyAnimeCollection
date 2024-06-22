@@ -16,7 +16,7 @@ interface AnimeDetail {
 }
 
 const AnimeDetail: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+    const { id, userId } = useParams<{ id: string; userId: string }>();
     const [anime, setAnime] = useState<AnimeDetail | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -24,28 +24,25 @@ const AnimeDetail: React.FC = () => {
     const [nextSeason, setNextSeason] = useState<number | null>(null);
     const [userRating, setUserRating] = useState<number | null>(null);
     const [showRatingForm, setShowRatingForm] = useState<boolean>(false);
+    const [apiUserId, setApiUserId] = useState<string | null>(null);
 
     useEffect(() => {
-        fetch(`https://api.jikan.moe/v4/anime/${id}`)
-            .then(response => response.json())
-            .then((data) => {
-                setAnime(data.data);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error('Erro ao buscar dados da API:', error);
-                setError('Erro ao buscar dados da API');
-                setLoading(false);
-            });
+        fetchAnimeDetail();
     }, [id]);
 
     useEffect(() => {
-        if (anime && anime.episodes.length > 0) {
-            // Obter temporadas únicas
-            const seasons = Array.from(new Set(anime.episodes.map(episode => episode.season)));
-            seasons.sort((a, b) => a - b); // Classificar as temporadas em ordem crescente
+        if (userId) {
+            fetchUserId(userId).then((apiId) => {
+                setApiUserId(apiId);
+            });
+        }
+    }, [userId]);
 
-            // Encontrar a temporada anterior e a próxima temporada
+    useEffect(() => {
+        if (anime && anime.episodes.length > 0) {
+            const seasons = Array.from(new Set(anime.episodes.map(episode => episode.season)));
+            seasons.sort((a, b) => a - b);
+
             const currentSeason = anime.episodes[0].season;
             const currentSeasonIndex = seasons.indexOf(currentSeason);
 
@@ -58,8 +55,50 @@ const AnimeDetail: React.FC = () => {
         }
     }, [anime]);
 
+    const fetchAnimeDetail = async () => {
+        try {
+            const response = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
+            const data = await response.json();
+            setAnime(data.data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Erro ao buscar dados da API:', error);
+            setError('Erro ao buscar dados da API');
+            setLoading(false);
+        }
+    };
+
+    const fetchUserId = async (userId: string): Promise<string | null> => {
+        try {
+            const response = await fetch(
+                `https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"id_utilizador":"${userId}"}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "x-apikey": "66744406f85595d7d606accb",
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Erro ao buscar ID do usuário');
+            }
+
+            const data = await response.json();
+            if (data.length > 0) {
+                return data[0].id_utilizador;
+            } else {
+                return null;
+            }
+        } catch (error) {
+            console.error('Erro ao buscar ID do usuário:', error);
+            return null;
+        }
+    };
+
     const renderStars = (score: number) => {
-        const stars = Math.round(score / 2); // Converter pontuação de 0-10 para 0-5
+        const stars = Math.round(score / 2);
         return (
             <div>
                 {Array.from({ length: 5 }, (_, index) => (
@@ -87,10 +126,35 @@ const AnimeDetail: React.FC = () => {
         );
     };
 
-    const submitUserRating = () => {
-        if (userRating !== null) {
-            alert(`Você avaliou este anime com ${userRating} estrelas!`);
-            setShowRatingForm(false);
+    const submitUserRating = async () => {
+        if (userRating !== null && apiUserId !== null) {
+            try {
+                const numericalRating = userRating * 2;
+                const ratingInfo = {
+                    mal_id: anime?.mal_id,
+                    id_utilizador: apiUserId,
+                    avaliacao: numericalRating
+                };
+
+                const submitResponse = await fetch('https://myanimecollection-7a81.restdb.io/rest/animeavaliacao', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-apikey': '66744406f85595d7d606accb'
+                    },
+                    body: JSON.stringify(ratingInfo)
+                });
+
+                if (!submitResponse.ok) {
+                    throw new Error('Erro ao enviar avaliação');
+                }
+
+                alert(`Você avaliou este anime com ${userRating} estrelas (${numericalRating} pontos)!`);
+                setShowRatingForm(false);
+            } catch (error) {
+                console.error('Erro ao enviar avaliação:', error);
+                alert('Erro ao enviar avaliação');
+            }
         }
     };
 
@@ -149,6 +213,6 @@ const AnimeDetail: React.FC = () => {
             </div>
         </div>
     );
-}
+};
 
 export default AnimeDetail;
