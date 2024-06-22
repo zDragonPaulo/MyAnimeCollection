@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
+import { useUser } from '/src/UserContext'; // Importa o contexto de usuário
 
 interface AnimeDetail {
     mal_id: number;
@@ -16,42 +17,23 @@ interface AnimeDetail {
 }
 
 const AnimeDetail: React.FC = () => {
-    const { id, userId } = useParams<{ id: string; userId: string }>();
+    const { id } = useParams<{ id: string }>();
     const [anime, setAnime] = useState<AnimeDetail | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [prevSeason, setPrevSeason] = useState<number | null>(null);
-    const [nextSeason, setNextSeason] = useState<number | null>(null);
     const [userRating, setUserRating] = useState<number | null>(null);
     const [showRatingForm, setShowRatingForm] = useState<boolean>(false);
-    const [apiUserId, setApiUserId] = useState<string | null>(null);
+    const { user } = useUser(); // Obtém o usuário do contexto
 
     useEffect(() => {
         fetchAnimeDetail();
     }, [id]);
 
     useEffect(() => {
-        if (userId) {
-            fetchUserId(userId).then((apiId) => {
-                setApiUserId(apiId);
-            });
-        }
-    }, [userId]);
-
-    useEffect(() => {
         if (anime && anime.episodes.length > 0) {
             const seasons = Array.from(new Set(anime.episodes.map(episode => episode.season)));
             seasons.sort((a, b) => a - b);
 
-            const currentSeason = anime.episodes[0].season;
-            const currentSeasonIndex = seasons.indexOf(currentSeason);
-
-            if (currentSeasonIndex > 0) {
-                setPrevSeason(seasons[currentSeasonIndex - 1]);
-            }
-            if (currentSeasonIndex < seasons.length - 1) {
-                setNextSeason(seasons[currentSeasonIndex + 1]);
-            }
         }
     }, [anime]);
 
@@ -65,35 +47,6 @@ const AnimeDetail: React.FC = () => {
             console.error('Erro ao buscar dados da API:', error);
             setError('Erro ao buscar dados da API');
             setLoading(false);
-        }
-    };
-
-    const fetchUserId = async (userId: string): Promise<string | null> => {
-        try {
-            const response = await fetch(
-                `https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"id_utilizador":"${userId}"}`,
-                {
-                    method: "GET",
-                    headers: {
-                        "x-apikey": "66744406f85595d7d606accb",
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error('Erro ao buscar ID do usuário');
-            }
-
-            const data = await response.json();
-            if (data.length > 0) {
-                return data[0].id_utilizador;
-            } else {
-                return null;
-            }
-        } catch (error) {
-            console.error('Erro ao buscar ID do usuário:', error);
-            return null;
         }
     };
 
@@ -127,12 +80,12 @@ const AnimeDetail: React.FC = () => {
     };
 
     const submitUserRating = async () => {
-        if (userRating !== null && apiUserId !== null) {
+        if (userRating !== null && user?.id_utilizador !== null) {
             try {
                 const numericalRating = userRating * 2;
                 const ratingInfo = {
                     mal_id: anime?.mal_id,
-                    id_utilizador: apiUserId,
+                    id_utilizador: user.id_utilizador, // Usar o id_utilizador do contexto
                     avaliacao: numericalRating
                 };
 
@@ -200,13 +153,7 @@ const AnimeDetail: React.FC = () => {
                             <button className="btn btn-secondary" onClick={submitUserRating}>Enviar Avaliação</button>
                         </div>
                     )}
-                    <h5>Número de Episódios: {anime.episodes.length}</h5>
-                    {prevSeason !== null && (
-                        <p>Temporada Anterior: {prevSeason}</p>
-                    )}
-                    {nextSeason !== null && (
-                        <p>Próxima Temporada: {nextSeason}</p>
-                    )}
+                    <h5>Número de Episódios: {anime.episodes}</h5>
                     <h5>Sinopse:</h5>
                     <p>{anime.synopsis}</p>
                 </div>
