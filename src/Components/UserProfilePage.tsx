@@ -2,8 +2,9 @@ import React, { useEffect, useState, useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link, useParams } from "react-router-dom";
 import { AnimeContext } from "../AnimeContext";
-import "./images.css"; // Ensure this CSS file contains styles for fixed-image and other necessary styles
+import "./images.css"; // Certifique-se de que este arquivo CSS contenha estilos para fixed-image e outros estilos necessários
 import userImage from '/src/assets/user.png';
+import { useUser } from '../UserContext'; // Importe o contexto do usuário
 
 interface Anime {
   mal_id: number;
@@ -16,30 +17,23 @@ interface Anime {
   };
 }
 
-interface User {
-  id_utilizador: number;
-  nome: string;
-  email: string;
-  aniversario: string;
-  // Adicione outras propriedades conforme necessário
-}
-
 const UserProfilePage: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); // Obter o ID do utilizador da URL
+  const { id } = useParams<{ id: string }>(); // Obter o ID do usuário da URL
   const { fetchAnimeListsByUserId } = useContext(AnimeContext);
   const [userName, setUserName] = useState<string | null>(null);
   const [birthday, setBirthday] = useState<string | null>(null);
   const [bio, setBio] = useState<string | null>(null);
-  const [userRating, setUserRating] = useState<number | null>(null);
-  const [showRatingForm, setShowRatingForm] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const { user } = useUser(); // Obter o usuário do contexto
   const [lists, setLists] = useState({
     porVer: [],
     aVer: [],
     completado: []
   });
+  const [userRating, setUserRating] = useState<number | null>(null);
+  const [showRatingForm, setShowRatingForm] = useState<string | null>(null);
 
   useEffect(() => {
     fetchUserData();
@@ -85,19 +79,6 @@ const UserProfilePage: React.FC = () => {
     }
   };
 
-  const renderStars = (score: number) => {
-    const stars = Math.round(score / 2); // Converter pontuação de 0-10 para 0-5
-    return (
-      <div>
-        {Array.from({ length: 5 }, (_, index) => (
-          <span key={index}>
-            {index < stars ? '★' : '☆'}
-          </span>
-        ))}
-      </div>
-    );
-  };
-
   const renderRatingStars = () => {
     return (
       <div>
@@ -114,17 +95,51 @@ const UserProfilePage: React.FC = () => {
     );
   };
 
-  const submitUserRating = () => {
-    if (userRating !== null) {
-      alert(`Você avaliou este anime com ${userRating} estrelas!`);
-      setShowRatingForm(false);
+  const submitUserRating = async () => {
+    if (userRating !== null && user?.id_utilizador !== null && showRatingForm) {
+      try {
+        const listType = showRatingForm as keyof typeof lists;
+        const numericalRating = userRating * 2;
+        const ratingInfo = {
+          id_lista: lists[listType][0]?.id_lista ?? 0, // Aqui você deve fornecer o ID da lista correspondente
+          id_utilizador: id,
+          id_utilizador_avaliador: user.id_utilizador, // Usar o id_utilizador do contexto
+          avaliacao: numericalRating
+        };
+
+        const submitResponse = await fetch('https://myanimecollection-cdd2.restdb.io/rest/listaavaliacao', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-apikey': '6675a683be0bc8beb8eafe89'
+          },
+          body: JSON.stringify(ratingInfo)
+        });
+
+        if (!submitResponse.ok) {
+          throw new Error('Erro ao enviar avaliação');
+        }
+
+        alert(`Você avaliou esta lista com ${userRating} estrelas (${numericalRating} pontos)!`);
+        setShowRatingForm(null);
+      } catch (error) {
+        console.error('Erro ao enviar avaliação:', error);
+        alert('Erro ao enviar avaliação');
+      }
     }
   };
 
-  const renderAnimeList = (userId: string, title: string, animes: Anime[], addToList: (anime: Anime, list: string) => void) => (
+  const renderAnimeList = (userId: string, title: string, animes: Anime[], listType: string) => (
     <div className="col-12 mb-4">
       <h5>
         <Link to={`/user/${userId}/list/${title.toLowerCase().replace(" ", "-")}`}>{title}</Link>
+        <button className="btn btn-secondary" onClick={() => setShowRatingForm(listType)}>Avaliar Lista</button>
+        {showRatingForm === listType && (
+        <div className="mt-3">
+          {renderRatingStars()}
+          <button className="btn btn-secondary" onClick={submitUserRating}>Enviar Avaliação</button>
+        </div>
+      )}
       </h5>
       <div className="row">
         {animes.slice(0, 4).map((anime) => (
@@ -139,13 +154,6 @@ const UserProfilePage: React.FC = () => {
               </Link>
               <div className="card-body">
                 <h5 className="card-title">{anime.title}</h5>
-                <p className="card-text">Avaliação: {renderStars(anime.score)}</p>
-                {showRatingForm && (
-                  <div>
-                    {renderRatingStars()}
-                    <button className="btn btn-secondary" onClick={submitUserRating}>Enviar Avaliação</button>
-                  </div>
-                )}
               </div>
             </div>
           </div>
@@ -192,9 +200,9 @@ const UserProfilePage: React.FC = () => {
       )}
 
       <div className="row mt-4">
-        {renderAnimeList(id!, "Por Ver", lists.porVer, () => {})}
-        {renderAnimeList(id!, "A Ver", lists.aVer, () => {})}
-        {renderAnimeList(id!, "Completado", lists.completado, () => {})}
+        {renderAnimeList(id!, "Por Ver", lists.porVer, "porVer")}
+        {renderAnimeList(id!, "A Ver", lists.aVer, "aVer")}
+        {renderAnimeList(id!, "Completado", lists.completado, "completado")}
       </div>
     </div>
   );
