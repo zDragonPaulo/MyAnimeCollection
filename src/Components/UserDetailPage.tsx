@@ -7,7 +7,6 @@ interface User {
   nome: string;
   email: string;
   aniversario: string;
-  // Adicione outras propriedades conforme necessário
 }
 
 const UserDetailPage: React.FC = () => {
@@ -31,16 +30,16 @@ const UserDetailPage: React.FC = () => {
           }
         );
         if (!response.ok) {
-          throw new Error("Erro ao buscar dados do usuário");
+          throw new Error("Erro ao buscar dados do Utilizador");
         }
         const data = await response.json();
         if (data.length > 0) {
           setUser(data[0]);
         } else {
-          setError("Usuário não encontrado");
+          setError("Utilizador não encontrado");
         }
       } catch (error) {
-        setError("Erro ao buscar dados do usuário");
+        setError("Erro ao buscar dados do Utilizador");
       } finally {
         setIsLoading(false);
       }

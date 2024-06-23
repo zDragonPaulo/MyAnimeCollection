@@ -41,14 +41,14 @@ const RegisterPage: React.FC = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Erro ao registrar o usuário");
+        throw new Error("Erro ao registrar o Utilizador");
       }
 
       // Navegar para a página de login após o sucesso
       navigate("/login");
     } catch (error) {
-      console.error("Erro ao registrar usuário:", error);
-      setError("Erro ao registrar usuário");
+      console.error("Erro ao registrar Utilizador:", error);
+      setError("Erro ao registrar Utilizador");
     }
   };
 

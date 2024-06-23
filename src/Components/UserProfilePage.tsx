@@ -2,9 +2,9 @@ import React, { useEffect, useState, useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link, useParams } from "react-router-dom";
 import { AnimeContext } from "../AnimeContext";
-import "./images.css"; // Certifique-se de que este arquivo CSS contenha estilos para fixed-image e outros estilos necessários
+import "./images.css"; 
 import userImage from '/src/assets/user.png';
-import { useUser } from '../UserContext'; // Importe o contexto do usuário
+import { useUser } from '../UserContext'; 
 
 interface Anime {
   mal_id: number;
@@ -18,7 +18,7 @@ interface Anime {
 }
 
 const UserProfilePage: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); // Obter o ID do usuário da URL
+  const { id } = useParams<{ id: string }>(); 
   const { fetchAnimeListsByUserId } = useContext(AnimeContext);
   const [userName, setUserName] = useState<string | null>(null);
   const [birthday, setBirthday] = useState<string | null>(null);
@@ -26,7 +26,7 @@ const UserProfilePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const { user } = useUser(); // Obter o usuário do contexto
+  const { user } = useUser(); 
   const [lists, setLists] = useState({
     porVer: [],
     aVer: [],
@@ -46,7 +46,7 @@ const UserProfilePage: React.FC = () => {
 
   const fetchUserData = async () => {
     setIsLoading(true);
-    setLoadingMessage("Carregando informações do usuário, por favor, aguarde...");
+    setLoadingMessage("A carregar informações do utilizador, por favor, aguarde...");
     try {
       const response = await fetch(
         `https://myanimecollection-87e3.restdb.io/rest/animeusers?q={"id_utilizador":${id}}`,
@@ -60,7 +60,7 @@ const UserProfilePage: React.FC = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Erro ao buscar dados do usuário");
+        throw new Error("Erro ao procurar dados do utilizador");
       }
 
       const data = await response.json();
@@ -74,11 +74,11 @@ const UserProfilePage: React.FC = () => {
         setLists(animeLists);
       } else {
         setUserName(null);
-        setError("Usuário não encontrado");
+        setError("Utilizador não encontrado");
       }
     } catch (error) {
       setUserName(null);
-      setError("Erro ao buscar dados do usuário");
+      setError("Erro ao buscar dados do Utilizador");
     } finally {
       setIsLoading(false);
     }

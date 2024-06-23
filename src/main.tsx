@@ -11,7 +11,7 @@ import LoginPage from "./Components/LoginPage";
 import RegisterPage from "./Components/RegisterPage";
 import UserProfilePage from "./Components/UserProfilePage";
 import AnimeListPage from "./Components/AnimeListPage";
-import UserSearchResults from "./Components/UserSearchResults"; // Importando o novo componente
+import UserSearchResults from "./Components/UserSearchResults"; 
 
 const router = createBrowserRouter([
   {
@@ -32,7 +32,7 @@ const router = createBrowserRouter([
         element: <SearchAnimePage />,
       },
       {
-        path: "user-search-results", // Adicionando a nova rota
+        path: "user-search-results", 
         element: <UserSearchResults />,
       },
       {
@@ -44,7 +44,7 @@ const router = createBrowserRouter([
         element: <RegisterPage />,
       },
       {
-        path: "user/:id", // Rota para visualizar perfil do utilizador com base no ID
+        path: "user/:id", 
         element: <UserProfilePage />,
       },
       {

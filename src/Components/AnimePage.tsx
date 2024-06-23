@@ -5,6 +5,7 @@ import { Dropdown } from "react-bootstrap";
 import { AnimeContext } from "../AnimeContext";
 import "./images.css";
 import { FaCheck } from "react-icons/fa";
+import loadingGif from "/src/assets/loading.gif";
 
 interface Anime {
   mal_id: number;
@@ -165,7 +166,7 @@ const AnimePage: React.FC = () => {
       {loading && (
         <div className="d-flex align-items-center">
           <div className="mx-auto">
-            <img src="loading.gif" width="30" height="30" alt="Carregando" />
+            <img src={loadingGif} width="30" height="30" alt="A carregar" />
           </div>
         </div>
       )}

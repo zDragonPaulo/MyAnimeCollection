@@ -27,14 +27,14 @@ const LoginPage: React.FC = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Erro ao buscar usuários");
+        throw new Error("Erro ao buscar Utilizadores");
       }
 
       const data = await response.json();
       console.log("User data fetched:", data);
 
       if (data.length === 0) {
-        setError("Usuário não encontrado");
+        setError("Utilizador não encontrado");
         return;
       }
 
@@ -42,20 +42,20 @@ const LoginPage: React.FC = () => {
       console.log("Fetched user:", userTest);
 
       if (userTest.password === password) {
-        delete userTest.password; // Remover a senha antes de definir o usuário
+        delete userTest.password; 
         setUser({
-          id_utilizador: userTest.id_utilizador, // Usar a propriedade correta
+          id_utilizador: userTest.id_utilizador, 
           username: userTest.nome,
           email: userTest.email,
-          // Adicione outras propriedades conforme necessário
+          
         });
-        navigate("/"); // Redirecionamento após login bem-sucedido
+        navigate("/");
       } else {
         setError("Credenciais inválidas");
       }
     } catch (error) {
-      console.error("Erro ao autenticar usuário:", error);
-      setError("Erro ao autenticar usuário");
+      console.error("Erro ao autenticar Utilizador:", error);
+      setError("Erro ao autenticar Utilizador");
     }
   };
 

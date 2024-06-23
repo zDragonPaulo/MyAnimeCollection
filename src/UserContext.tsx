@@ -9,11 +9,11 @@ import React, {
 import { useNavigate } from "react-router-dom";
 
 interface User {
-  id_utilizador: number; // Ajustado para refletir a propriedade correta
+  id_utilizador: number; 
   username: string;
   email: string;
-  password?: string; // Adicione a senha para o contexto do usuário se necessário
-  // Adicione outras propriedades conforme necessário
+  password?: string; 
+  
 }
 
 interface UserContextType {

@@ -6,7 +6,7 @@ interface User {
   id_utilizador: number;
   nome: string;
   email: string;
-  // Adicione outras propriedades conforme necessário
+  
 }
 
 const UserSearchResults: React.FC = () => {

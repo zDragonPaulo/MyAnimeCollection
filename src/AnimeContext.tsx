@@ -131,7 +131,7 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({
   const saveListsToRestDB = async () => {
     if (!user || !user.id_utilizador) {
       console.error(
-        "Usuário não está autenticado ou ID do usuário não está disponível"
+        "O Utilizador não está autenticado ou ID do Utilizador não está disponível"
       );
       return;
     }
@@ -218,7 +218,7 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({
   const fetchAnimeLists = async () => {
     if (!user || !user.id_utilizador) {
       console.error(
-        "Usuário não está autenticado ou ID do usuário não está disponível"
+        "O Utilizador não está autenticado ou ID do Utilizador não está disponível"
       );
       return;
     }
