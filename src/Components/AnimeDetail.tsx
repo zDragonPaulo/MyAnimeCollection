@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
-import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { useUser } from '/src/UserContext'; // Importa o contexto de usuário
-import { useUser } from '/src/UserContext'; // Importa o contexto de usuário
+import { useUser } from '../UserContext'; // Importa o contexto de usuário
 
 interface AnimeDetail {
     mal_id: number;
@@ -26,44 +24,11 @@ const AnimeDetail: React.FC = () => {
     const [userRating, setUserRating] = useState<number | null>(null);
     const [showRatingForm, setShowRatingForm] = useState<boolean>(false);
     const { user } = useUser(); // Obtém o usuário do contexto
-    const { user } = useUser(); // Obtém o usuário do contexto
 
     useEffect(() => {
-        fetchAnimeDetail();
         fetchAnimeDetail();
     }, [id]);
 
-    useEffect(() => {
-        if (anime && anime.episodes.length > 0) {
-            const seasons = Array.from(new Set(anime.episodes.map(episode => episode.season)));
-            seasons.sort((a, b) => a - b);
-
-            seasons.sort((a, b) => a - b);
-
-            const currentSeason = anime.episodes[0].season;
-            const currentSeasonIndex = seasons.indexOf(currentSeason);
-
-            if (currentSeasonIndex > 0) {
-                setPrevSeason(seasons[currentSeasonIndex - 1]);
-            }
-            if (currentSeasonIndex < seasons.length - 1) {
-                setNextSeason(seasons[currentSeasonIndex + 1]);
-            }
-        }
-    }, [anime]);
-
-    const fetchAnimeDetail = async () => {
-        try {
-            const response = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
-            const data = await response.json();
-            setAnime(data.data);
-            setLoading(false);
-        } catch (error) {
-            console.error('Erro ao buscar dados da API:', error);
-            setError('Erro ao buscar dados da API');
-            setLoading(false);
-        }
-    };
 
     const fetchAnimeDetail = async () => {
         try {
@@ -79,7 +44,6 @@ const AnimeDetail: React.FC = () => {
     };
 
     const renderStars = (score: number) => {
-        const stars = Math.round(score / 2);
         const stars = Math.round(score / 2);
         return (
             <div>
@@ -189,7 +153,6 @@ const AnimeDetail: React.FC = () => {
             </div>
         </div>
     );
-};
 };
 
 export default AnimeDetail;
