@@ -38,17 +38,26 @@ const SearchAnimePage: React.FC = () => {
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                       <Dropdown.Item
-                        onClick={(e) => { e.preventDefault(); addToList(anime, "porVer"); }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          addToList(anime, "porVer");
+                        }}
                       >
                         Por Ver
                       </Dropdown.Item>
                       <Dropdown.Item
-                        onClick={(e) => { e.preventDefault(); addToList(anime, "aVer"); }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          addToList(anime, "aVer");
+                        }}
                       >
                         A Ver
                       </Dropdown.Item>
                       <Dropdown.Item
-                        onClick={(e) => { e.preventDefault(); addToList(anime, "completado"); }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          addToList(anime, "completado");
+                        }}
                       >
                         Completado
                       </Dropdown.Item>

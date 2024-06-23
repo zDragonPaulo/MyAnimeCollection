@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { AnimeContext } from "../AnimeContext";
 import { useUser } from "../UserContext";
 import { FaUser, FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
-import logo from '/src/assets/icon.png';
+import logo from "/src/assets/icon.png";
 
 const Navbar: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
   const [searchType, setSearchType] = useState<string>("animes");
-  const { setAnimes, setSearchPerformed, saveListsToRestDB } = useContext(AnimeContext);
+  const { setAnimes, setSearchPerformed, saveListsToRestDB } =
+    useContext(AnimeContext);
   const { user, logout } = useUser();
   const navigate = useNavigate();
 
@@ -23,7 +24,9 @@ const Navbar: React.FC = () => {
       setAnimes([]);
       setSearchPerformed(false);
 
-      const response = await fetch(`https://api.jikan.moe/v4/anime?q=${query}&sfw`);
+      const response = await fetch(
+        `https://api.jikan.moe/v4/anime?q=${query}&sfw`
+      );
       const data = await response.json();
 
       setAnimes(data.data);
@@ -38,38 +41,35 @@ const Navbar: React.FC = () => {
     try {
       const apiUrl = `https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"nome":"${query}"}`;
       console.log("URL da API:", apiUrl);
-  
+
       const response = await fetch(apiUrl, {
         method: "GET",
         headers: {
           "x-apikey": "66744406f85595d7d606accb",
           "Content-Type": "application/json",
         },
-        mode: 'cors',
-        cache: 'no-cache',
+        mode: "cors",
+        cache: "no-cache",
       });
-  
+
       if (!response.ok) {
         throw new Error("Erro ao buscar utilizadores");
       }
-  
+
       console.log("Resposta bruta da API:", response);
-  
+
       const data = await response.json();
       console.log("Dados JSON da API:", data);
-  
+
       if (data.length === 0) {
         console.warn("Nenhum utilizador encontrado para a query:", query);
       }
-  
+
       navigate("/user-search-results", { state: { users: data } });
     } catch (error) {
       console.error("Erro ao buscar utilizadores:", error);
     }
   };
-  
-  
-  
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
@@ -98,14 +98,22 @@ const Navbar: React.FC = () => {
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
         <a className="navbar-brand" href="/">
-          <img src={logo} width="30" height="30" alt="Logo" /> 𝓜𝔂 𝓐𝓷𝓲𝓶𝓮 𝓒𝓸𝓵𝓵𝓮𝓬𝓽𝓲𝓸𝓷
+          <img src={logo} width="30" height="30" alt="Logo" /> 𝓜𝔂 𝓐𝓷𝓲𝓶𝓮
+          𝓒𝓸𝓵𝓵𝓮𝓬𝓽𝓲𝓸𝓷
         </a>
         <button className="navbar-toggler" type="button" onClick={toggleNav}>
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className={`collapse navbar-collapse ${isNavOpen ? "show" : ""}`} id="navbarNav">
+        <div
+          className={`collapse navbar-collapse ${isNavOpen ? "show" : ""}`}
+          id="navbarNav"
+        >
           <ul className="navbar-nav me-auto mb-6 mb-lg-0"></ul>
-          <form className="d-flex mx-auto" onSubmit={handleSubmit} style={{ maxWidth: "600px" }}>
+          <form
+            className="d-flex mx-auto"
+            onSubmit={handleSubmit}
+            style={{ maxWidth: "600px" }}
+          >
             <select
               className="form-select me-4"
               value={searchType}
@@ -134,7 +142,10 @@ const Navbar: React.FC = () => {
                   </a>
                 </li>
                 <li className="nav-item">
-                  <button className="btn btn-link nav-link" onClick={handleLogout}>
+                  <button
+                    className="btn btn-link nav-link"
+                    onClick={handleLogout}
+                  >
                     <FaSignOutAlt /> Sair
                   </button>
                 </li>

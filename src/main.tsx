@@ -1,17 +1,17 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
 import "bootstrap/dist/css/bootstrap.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import ErrorPage from './Components/ErrorPage';
-import AnimePage from './Components/AnimePage';
-import AnimeDetail from './Components/AnimeDetail';
-import SearchAnimePage from './Components/SearchAnimePage';
-import LoginPage from './Components/LoginPage';
-import RegisterPage from './Components/RegisterPage';
-import UserProfilePage from './Components/UserProfilePage';
-import AnimeListPage from './Components/AnimeListPage';
-import UserSearchResults from './Components/UserSearchResults'; // Importando o novo componente
+import ErrorPage from "./Components/ErrorPage";
+import AnimePage from "./Components/AnimePage";
+import AnimeDetail from "./Components/AnimeDetail";
+import SearchAnimePage from "./Components/SearchAnimePage";
+import LoginPage from "./Components/LoginPage";
+import RegisterPage from "./Components/RegisterPage";
+import UserProfilePage from "./Components/UserProfilePage";
+import AnimeListPage from "./Components/AnimeListPage";
+import UserSearchResults from "./Components/UserSearchResults"; // Importando o novo componente
 
 const router = createBrowserRouter([
   {
@@ -45,13 +45,13 @@ const router = createBrowserRouter([
       },
       {
         path: "user/:id", // Rota para visualizar perfil do utilizador com base no ID
-        element: <UserProfilePage />
+        element: <UserProfilePage />,
       },
       {
         path: "user/:id/list/:listName",
-        element: <AnimeListPage />
+        element: <AnimeListPage />,
       },
-    ]
+    ],
   },
 ]);
 
