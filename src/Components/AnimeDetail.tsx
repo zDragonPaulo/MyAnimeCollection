@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
+import { useUser } from '/src/UserContext'; // Importa o contexto de usuário
 
 interface AnimeDetail {
     mal_id: number;
@@ -24,28 +25,17 @@ const AnimeDetail: React.FC = () => {
     const [nextSeason, setNextSeason] = useState<number | null>(null);
     const [userRating, setUserRating] = useState<number | null>(null);
     const [showRatingForm, setShowRatingForm] = useState<boolean>(false);
+    const { user } = useUser(); // Obtém o usuário do contexto
 
     useEffect(() => {
-        fetch(`https://api.jikan.moe/v4/anime/${id}`)
-            .then(response => response.json())
-            .then((data) => {
-                setAnime(data.data);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error('Erro ao buscar dados da API:', error);
-                setError('Erro ao buscar dados da API');
-                setLoading(false);
-            });
+        fetchAnimeDetail();
     }, [id]);
 
     useEffect(() => {
         if (anime && anime.episodes.length > 0) {
-            // Obter temporadas únicas
             const seasons = Array.from(new Set(anime.episodes.map(episode => episode.season)));
-            seasons.sort((a, b) => a - b); // Classificar as temporadas em ordem crescente
+            seasons.sort((a, b) => a - b);
 
-            // Encontrar a temporada anterior e a próxima temporada
             const currentSeason = anime.episodes[0].season;
             const currentSeasonIndex = seasons.indexOf(currentSeason);
 
@@ -58,8 +48,21 @@ const AnimeDetail: React.FC = () => {
         }
     }, [anime]);
 
+    const fetchAnimeDetail = async () => {
+        try {
+            const response = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
+            const data = await response.json();
+            setAnime(data.data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Erro ao buscar dados da API:', error);
+            setError('Erro ao buscar dados da API');
+            setLoading(false);
+        }
+    };
+
     const renderStars = (score: number) => {
-        const stars = Math.round(score / 2); // Converter pontuação de 0-10 para 0-5
+        const stars = Math.round(score / 2);
         return (
             <div>
                 {Array.from({ length: 5 }, (_, index) => (
@@ -87,10 +90,35 @@ const AnimeDetail: React.FC = () => {
         );
     };
 
-    const submitUserRating = () => {
-        if (userRating !== null) {
-            alert(`Você avaliou este anime com ${userRating} estrelas!`);
-            setShowRatingForm(false);
+    const submitUserRating = async () => {
+        if (userRating !== null && user?.id_utilizador !== null) {
+            try {
+                const numericalRating = userRating * 2;
+                const ratingInfo = {
+                    mal_id: anime?.mal_id,
+                    id_utilizador: user.id_utilizador, // Usar o id_utilizador do contexto
+                    avaliacao: numericalRating
+                };
+
+                const submitResponse = await fetch('https://myanimecollection-cdd2.restdb.io/rest/animeavaliacao', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-apikey': '6675a683be0bc8beb8eafe89'
+                    },
+                    body: JSON.stringify(ratingInfo)
+                });
+
+                if (!submitResponse.ok) {
+                    throw new Error('Erro ao enviar avaliação');
+                }
+
+                alert(`Você avaliou este anime com ${userRating} estrelas (${numericalRating} pontos)!`);
+                setShowRatingForm(false);
+            } catch (error) {
+                console.error('Erro ao enviar avaliação:', error);
+                alert('Erro ao enviar avaliação');
+            }
         }
     };
 
@@ -149,6 +177,6 @@ const AnimeDetail: React.FC = () => {
             </div>
         </div>
     );
-}
+};
 
 export default AnimeDetail;

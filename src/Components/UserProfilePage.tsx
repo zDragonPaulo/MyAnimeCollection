@@ -50,11 +50,11 @@ const UserProfilePage: React.FC = () => {
     setLoadingMessage("Carregando informações do usuário, por favor, aguarde...");
     try {
       const response = await fetch(
-        `https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"id_utilizador":${id}}`,
+        `https://myanimecollection-cdd2.restdb.io/rest/animeusers?q={"id_utilizador":${id}}`,
         {
           method: "GET",
           headers: {
-            "x-apikey": "66744406f85595d7d606accb",
+            "x-apikey": "6675a683be0bc8beb8eafe89",
             "Content-Type": "application/json",
           },
         }
@@ -139,7 +139,7 @@ const UserProfilePage: React.FC = () => {
               </Link>
               <div className="card-body">
                 <h5 className="card-title">{anime.title}</h5>
-                <p className="card-text">Avaliação: {renderStars(anime.score)}</p>
+                <h5 className="card-text">Avaliação: {renderStars(anime.score)}</h5>
                 {showRatingForm && (
                   <div>
                     {renderRatingStars()}
@@ -176,14 +176,14 @@ const UserProfilePage: React.FC = () => {
               </div>
               <div className="col-md-8">
                 {birthday && (
-                  <p>
+                  <div>
                     <strong>Aniversário:</strong> {birthday}
-                  </p>
+                  </div>
                 )}
                 {bio && (
-                  <p>
+                  <div>
                     <strong>Biografia:</strong> {bio}
-                  </p>
+                  </div>
                 )}
               </div>
             </div>
