@@ -84,12 +84,12 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({
   const fetchAnimeListsByUserId = async (userId: number) => {
     try {
       const response = await fetch(
-        `https://myanimecollection-cdd2.restdb.io/rest/listasanimes?q={"id_utilizador":${userId}}`,
+        `https://myanimecollection-87e3.restdb.io/rest/listasanimes?q={"id_utilizador":${userId}}`,
         {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "x-apikey": "6675a683be0bc8beb8eafe89",
+            "x-apikey": "667848c79f6f5e5fc939ee20",
           },
         }
       );
@@ -160,12 +160,12 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({
           `Verificando lista com id_utilizador: ${user.id_utilizador} e id_lista: ${data.id_lista}`
         );
         const checkResponse = await fetch(
-          `https://myanimecollection-cdd2.restdb.io/rest/listasanimes?q={"id_utilizador":${user.id_utilizador},"id_lista":${data.id_lista}}`,
+          `https://myanimecollection-87e3.restdb.io/rest/listasanimes?q={"id_utilizador":${user.id_utilizador},"id_lista":${data.id_lista}}`,
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "x-apikey": "6675a683be0bc8beb8eafe89",
+              "x-apikey": "667848c79f6f5e5fc939ee20",
             },
           }
         );
@@ -184,17 +184,17 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({
         console.log(`Listas existentes: ${JSON.stringify(existingLists)}`);
 
         let method = "POST";
-        let url = "https://myanimecollection-cdd2.restdb.io/rest/listasanimes";
+        let url = "https://myanimecollection-87e3.restdb.io/rest/listasanimes";
         if (existingLists.length > 0) {
           method = "PATCH";
-          url = `https://myanimecollection-cdd2.restdb.io/rest/listasanimes/${existingLists[0]._id}`;
+          url = `https://myanimecollection-87e3.restdb.io/rest/listasanimes/${existingLists[0]._id}`;
         }
 
         const response = await fetch(url, {
           method: method,
           headers: {
             "Content-Type": "application/json",
-            "x-apikey": "6675a683be0bc8beb8eafe89",
+            "x-apikey": "667848c79f6f5e5fc939ee20",
           },
           body: JSON.stringify(data),
         });
@@ -225,12 +225,12 @@ export const AnimeProvider: React.FC<{ children: ReactNode }> = ({
 
     try {
       const response = await fetch(
-        `https://myanimecollection-cdd2.restdb.io/rest/listasanimes?q={"id_utilizador":${user.id_utilizador}}`,
+        `https://myanimecollection-87e3.restdb.io/rest/listasanimes?q={"id_utilizador":${user.id_utilizador}}`,
         {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "x-apikey": "6675a683be0bc8beb8eafe89",
+            "x-apikey": "667848c79f6f5e5fc939ee20",
           },
         }
       );

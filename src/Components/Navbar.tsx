@@ -39,13 +39,13 @@ const Navbar: React.FC = () => {
 
   const searchUsers = async (query: string) => {
     try {
-      const apiUrl = `https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"nome":"${query}"}`;
+      const apiUrl = `https://myanimecollection-87e3.restdb.io/rest/animeusers?q={"nome":"${query}"}`;
       console.log("URL da API:", apiUrl);
 
       const response = await fetch(apiUrl, {
         method: "GET",
         headers: {
-          "x-apikey": "66744406f85595d7d606accb",
+          "x-apikey": "667848c79f6f5e5fc939ee20",
           "Content-Type": "application/json",
         },
         mode: "cors",

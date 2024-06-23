@@ -44,11 +44,11 @@ const UserProfilePage: React.FC = () => {
     setLoadingMessage("Carregando informações do usuário, por favor, aguarde...");
     try {
       const response = await fetch(
-        `https://myanimecollection-cdd2.restdb.io/rest/animeusers?q={"id_utilizador":${id}}`,
+        `https://myanimecollection-87e3.restdb.io/rest/animeusers?q={"id_utilizador":${id}}`,
         {
           method: "GET",
           headers: {
-            "x-apikey": "6675a683be0bc8beb8eafe89",
+            "x-apikey": "667848c79f6f5e5fc939ee20",
             "Content-Type": "application/json",
           },
         }
@@ -107,11 +107,11 @@ const UserProfilePage: React.FC = () => {
           avaliacao: numericalRating
         };
 
-        const submitResponse = await fetch('https://myanimecollection-cdd2.restdb.io/rest/listaavaliacao', {
+        const submitResponse = await fetch('https://myanimecollection-87e3.restdb.io/rest/listaavaliacao', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-apikey': '6675a683be0bc8beb8eafe89'
+            'x-apikey': '667848c79f6f5e5fc939ee20'
           },
           body: JSON.stringify(ratingInfo)
         });

@@ -21,11 +21,11 @@ const UserDetailPage: React.FC = () => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"id_utilizador":${userId}}`,
+          `https://myanimecollection-87e3.restdb.io/rest/animeusers?q={"id_utilizador":${userId}}`,
           {
             method: "GET",
             headers: {
-              "x-apikey": "66744406f85595d7d606accb",
+              "x-apikey": "667848c79f6f5e5fc939ee20",
               "Content-Type": "application/json",
             },
           }

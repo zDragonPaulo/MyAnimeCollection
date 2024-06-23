@@ -82,11 +82,11 @@ const AnimeDetail: React.FC = () => {
                     avaliacao: numericalRating
                 };
 
-                const submitResponse = await fetch('https://myanimecollection-cdd2.restdb.io/rest/animeavaliacao', {
+                const submitResponse = await fetch('https://myanimecollection-87e3.restdb.io/rest/animeavaliacao', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'x-apikey': '6675a683be0bc8beb8eafe89'
+                        'x-apikey': '667848c79f6f5e5fc939ee20'
                     },
                     body: JSON.stringify(ratingInfo)
                 });
