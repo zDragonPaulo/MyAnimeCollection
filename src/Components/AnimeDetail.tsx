@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
+import { useUser } from '/src/UserContext'; // Importa o contexto de usuário
 import { useUser } from '/src/UserContext'; // Importa o contexto de usuário
 
 interface AnimeDetail {
@@ -21,19 +23,21 @@ const AnimeDetail: React.FC = () => {
     const [anime, setAnime] = useState<AnimeDetail | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [prevSeason, setPrevSeason] = useState<number | null>(null);
-    const [nextSeason, setNextSeason] = useState<number | null>(null);
     const [userRating, setUserRating] = useState<number | null>(null);
     const [showRatingForm, setShowRatingForm] = useState<boolean>(false);
     const { user } = useUser(); // Obtém o usuário do contexto
+    const { user } = useUser(); // Obtém o usuário do contexto
 
     useEffect(() => {
+        fetchAnimeDetail();
         fetchAnimeDetail();
     }, [id]);
 
     useEffect(() => {
         if (anime && anime.episodes.length > 0) {
             const seasons = Array.from(new Set(anime.episodes.map(episode => episode.season)));
+            seasons.sort((a, b) => a - b);
+
             seasons.sort((a, b) => a - b);
 
             const currentSeason = anime.episodes[0].season;
@@ -61,7 +65,21 @@ const AnimeDetail: React.FC = () => {
         }
     };
 
+    const fetchAnimeDetail = async () => {
+        try {
+            const response = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
+            const data = await response.json();
+            setAnime(data.data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Erro ao buscar dados da API:', error);
+            setError('Erro ao buscar dados da API');
+            setLoading(false);
+        }
+    };
+
     const renderStars = (score: number) => {
+        const stars = Math.round(score / 2);
         const stars = Math.round(score / 2);
         return (
             <div>
@@ -164,19 +182,14 @@ const AnimeDetail: React.FC = () => {
                             <button className="btn btn-secondary" onClick={submitUserRating}>Enviar Avaliação</button>
                         </div>
                     )}
-                    <h5>Número de Episódios: {anime.episodes.length}</h5>
-                    {prevSeason !== null && (
-                        <p>Temporada Anterior: {prevSeason}</p>
-                    )}
-                    {nextSeason !== null && (
-                        <p>Próxima Temporada: {nextSeason}</p>
-                    )}
+                    <h5>Número de Episódios: {anime.episodes}</h5>
                     <h5>Sinopse:</h5>
                     <p>{anime.synopsis}</p>
                 </div>
             </div>
         </div>
     );
+};
 };
 
 export default AnimeDetail;

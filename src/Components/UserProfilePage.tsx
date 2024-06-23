@@ -16,12 +16,10 @@ interface Anime {
   };
 }
 
-interface User {
-  id_utilizador: number;
-  nome: string;
-  email: string;
-  aniversario: string;
-  // Adicione outras propriedades conforme necessário
+interface AnimeList {
+  id: string;
+  title: string;
+  animes: Anime[];
 }
 
 const UserProfilePage: React.FC = () => {
@@ -30,19 +28,31 @@ const UserProfilePage: React.FC = () => {
   const [userName, setUserName] = useState<string | null>(null);
   const [birthday, setBirthday] = useState<string | null>(null);
   const [bio, setBio] = useState<string | null>(null);
-  const [userRating, setUserRating] = useState<number | null>(null);
-  const [showRatingForm, setShowRatingForm] = useState<boolean>(false);
+  const [userRating, setUserRating] = useState<{ [key: string]: number | null }>({});
+  const [showRatingForm, setShowRatingForm] = useState<{ [key: string]: boolean }>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [lists, setLists] = useState({
-    porVer: [],
-    aVer: [],
-    completado: []
-  });
+  const [lists, setLists] = useState<AnimeList[]>([]);
 
   useEffect(() => {
     fetchUserData();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchLists = async () => {
+      setIsLoading(true);
+      try {
+        const animeLists = await fetchAnimeListsByUserId(Number(id));
+        setLists(animeLists);
+      } catch (error) {
+        setError("Erro ao buscar listas de animes");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchLists();
   }, [id]);
 
   const fetchUserData = async () => {
@@ -98,36 +108,104 @@ const UserProfilePage: React.FC = () => {
     );
   };
 
-  const renderRatingStars = () => {
+  const renderRatingStars = (listId: string) => {
     return (
       <div>
         {Array.from({ length: 5 }, (_, index) => (
           <span
             key={index}
             style={{ cursor: 'pointer' }}
-            onClick={() => setUserRating(index + 1)}
+            onClick={() => setUserRating({ ...userRating, [listId]: index + 1 })}
           >
-            {index < (userRating ?? 0) ? '★' : '☆'}
+            {index < (userRating[listId] ?? 0) ? '★' : '☆'}
           </span>
         ))}
       </div>
     );
   };
 
-  const submitUserRating = () => {
-    if (userRating !== null) {
-      alert(`Você avaliou este anime com ${userRating} estrelas!`);
-      setShowRatingForm(false);
+  const fetchUserId = async (userId: string): Promise<string | null> => {
+    try {
+      const response = await fetch(
+        `https://myanimecollection-7a81.restdb.io/rest/animeusers?q={"id_utilizador":"${userId}"}`,
+        {
+          method: "GET",
+          headers: {
+            "x-apikey": "66744406f85595d7d606accb",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Erro ao buscar ID do usuário');
+      }
+
+      const data = await response.json();
+      if (data.length > 0) {
+        return data[0].id_utilizador;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Erro ao buscar ID do usuário:', error);
+      return null;
     }
   };
 
-  const renderAnimeList = (userId: string, title: string, animes: Anime[], addToList: (anime: Anime, list: string) => void) => (
-    <div className="col-12 mb-4">
+  const submitUserRating = async (listId: string) => {
+    if (userRating[listId] !== null) {
+      const userApiId = await fetchUserId(id!);
+      if (!userApiId) {
+        alert('Usuário não encontrado');
+        return;
+      }
+
+      const numericalRating = (userRating[listId] ?? 0) * 2;
+
+      try {
+        const response = await fetch('https://myanimecollection-7a81.restdb.io/rest/listaavaliacao', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-apikey': '66744406f85595d7d606accb'
+          },
+          body: JSON.stringify({
+            id_lista: listId,
+            id_utilizador: id,
+            id_utilizador_avaliador: userApiId,
+            avaliacao: numericalRating
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Erro ao enviar avaliação');
+        }
+
+        alert(`Você avaliou esta lista com ${userRating[listId]} estrelas (${numericalRating} pontos)!`);
+        setShowRatingForm({ ...showRatingForm, [listId]: false });
+      } catch (error) {
+        console.error('Erro ao enviar avaliação:', error);
+        alert('Erro ao enviar avaliação');
+      }
+    }
+  };
+
+  const renderAnimeList = (list: AnimeList) => (
+    <div className="col-12 mb-4" key={list.id}>
       <h5>
-        <Link to={`/user/${userId}/list/${title.toLowerCase().replace(" ", "-")}`}>{title}</Link>
+        <Link to={`/user/${id}/list/${list.title.toLowerCase().replace(" ", "-")}`}>{list.title}</Link>
+        {showRatingForm[list.id] ? (
+          <div>
+            {renderRatingStars(list.id)}
+            <button className="btn btn-secondary" onClick={() => submitUserRating(list.id)}>Enviar Avaliação</button>
+          </div>
+        ) : (
+          <button className="btn btn-primary" onClick={() => setShowRatingForm({ ...showRatingForm, [list.id]: true })}>Avaliar Lista</button>
+        )}
       </h5>
       <div className="row">
-        {animes.slice(0, 4).map((anime) => (
+        {list.animes.slice(0, 4).map((anime) => (
           <div key={anime.mal_id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
             <div className="card h-100 position-relative">
               <Link to={`/anime/${anime.mal_id}`}>
@@ -192,9 +270,7 @@ const UserProfilePage: React.FC = () => {
       )}
 
       <div className="row mt-4">
-        {renderAnimeList(id!, "Por Ver", lists.porVer, () => {})}
-        {renderAnimeList(id!, "A Ver", lists.aVer, () => {})}
-        {renderAnimeList(id!, "Completado", lists.completado, () => {})}
+        {lists.map((list) => renderAnimeList(list))}
       </div>
     </div>
   );
