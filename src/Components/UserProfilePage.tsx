@@ -32,6 +32,11 @@ const UserProfilePage: React.FC = () => {
     aVer: [],
     completado: []
   });
+  const listTypeToIdMap = {
+    porVer: 1,
+    aVer: 2,
+    completado: 3
+  };
   const [userRating, setUserRating] = useState<number | null>(null);
   const [showRatingForm, setShowRatingForm] = useState<string | null>(null);
 
@@ -101,11 +106,12 @@ const UserProfilePage: React.FC = () => {
         const listType = showRatingForm as keyof typeof lists;
         const numericalRating = userRating * 2;
         const ratingInfo = {
-          id_lista: lists[listType][0]?.id_lista ?? 0, // Aqui você deve fornecer o ID da lista correspondente
+          id_lista: listTypeToIdMap[listType], // Usando o mapeamento para obter o ID correto
           id_utilizador: id,
-          id_utilizador_avaliador: user.id_utilizador, // Usar o id_utilizador do contexto
+          id_utilizador_avaliador: user.id_utilizador,
           avaliacao: numericalRating
         };
+
 
         const submitResponse = await fetch('https://myanimecollection-87e3.restdb.io/rest/listaavaliacao', {
           method: 'POST',
