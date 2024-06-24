@@ -89,8 +89,9 @@ const Navbar: React.FC = () => {
   };
 
   const handleSaveLists = async () => {
-    console.log("Botão de salvar listas clicado");
+    console.log("Botão de guardar listas clicado");
     await saveListsToRestDB();
+    alert("As listas foram atualizadas")
     console.log("Função saveListsToRestDB chamada");
   };
 
@@ -166,7 +167,7 @@ const Navbar: React.FC = () => {
             )}
             <li className="nav-item">
               <button className="btn btn-secondary" onClick={handleSaveLists}>
-                Salvar Listas
+                Guardar Listas
               </button>
             </li>
           </ul>

@@ -23,7 +23,7 @@ const AnimeDetail: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [userRating, setUserRating] = useState<number | null>(null);
     const [showRatingForm, setShowRatingForm] = useState<boolean>(false);
-    const { user } = useUser(); // Obtém o usuário do contexto
+    const { user } = useUser();
 
     useEffect(() => {
         fetchAnimeDetail();
