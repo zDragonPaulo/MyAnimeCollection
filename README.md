@@ -160,3 +160,7 @@ Contributions, bug reports and feature requests are welcome. Typical workflow:
 5. Open a pull request describing the change
 
 Please avoid committing local environment secrets, .mdf or system files.
+
+License
+-------
+- This repository is licensed under the GNU General Public License v3.0 (GPL-3.0).
